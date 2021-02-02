@@ -1,7 +1,7 @@
-#Theme : Online Education#
+# Theme : Online Education
 
-##Project Title : Education Made Easy (E2)##
-**Domain : Website Development**
+## Project Title : Education Made Easy (E2)
+** Domain : Website Development **
 
 Welcome to LBS Championship 2021
 \n
