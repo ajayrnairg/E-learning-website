@@ -3,12 +3,14 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const _ = require("lodash");
 const app = express();
-
+const bcrypt = require("bcrypt");
+const crypto = require("crypto");
+const session = require('express-session');
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
-
+app.use(session({secret: "Shh, its a secret!"}));
 var db = mongoose.connect("mongodb://localhost:27017/elearnDB", {useNewUrlParser: true, useUnifiedTopology: true});
 var name="";
 const loginSchema = {
@@ -58,9 +60,12 @@ app.get("/Quiz", function(req,res){
 
 
 app.post("/login", function(req, res){
+	var salt = "Xy";
+	var hashed = crypto.createHash('md5').update(req.body.pass).digest("hex");
+   var passhash = hashed + salt;
 	name = req.body.username;
 	const pass= req.body.pass;
-	Student.exists({username: name , pass: pass}, function(err,doc){
+	Student.exists({username: name , pass: passhash}, function(err,doc){
 		if(err){
 			console.log(err);
 			console.log("Invalid username or password");
@@ -82,13 +87,22 @@ app.get("/dashboard", function(req,res){
 	res.render("dashboard", {username: name});
 });
 
+app.get("/videolec", function(req,res){
+	req.session.cbx++;
+});
+
+app.post("/dash", function(req,res){
+	res.render("dash", {points: req.session.cbx});
+});
+
 app.post("/signup", function(req, res){
+	var salt = "Xy";
+	var hashed = crypto.createHash('md5').update(req.body.pass).digest("hex");
+   var passhash = hashed + salt;  
   const login = new Student ({
    username: req.body.username,
-   pass: req.body.pass
+   pass: passhash
  });
-     console.log(req.body.username);
-	 console.log(req.body.pass);
   login.save(function(err){
    if (!err){
 	   res.redirect("/");
