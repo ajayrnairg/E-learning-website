@@ -7,7 +7,7 @@
 J. N. Guru Akaash  
 Ajay Nair  
 Shubham Zope  
-Varun Tripathi  
+Varun Tripathy   
 
 Welcome to LBS Championship 2021  
 Target : To complete the project before 15th of February.\
