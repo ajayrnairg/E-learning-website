@@ -16,8 +16,10 @@
     "ejs": "^2.6.1",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
+    "fs": "0.0.1-security",
     "lodash": "^4.17.20",
     "md5": "^2.3.0",
-    "mongoose": "^5.11.14"
+    "mongoose": "^5.11.14",
+    "xlsx": "^0.16.9"
   }
 }

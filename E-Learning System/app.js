@@ -6,6 +6,8 @@ const app = express();
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const session = require('express-session');
+const fs = require("fs");
+var XLSV = require("xlsx");
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -21,11 +23,14 @@ var name="";
 const loginSchema = {
  username: String,
  pass: String,
- points: Number
+ points: Number,
+ quizresult: Number
 };
 
 const Student = mongoose.model("Student",loginSchema);
-
+app.get("/teacher", function(req,res){
+	res.render("teacher");
+});
 
 app.get("/", function(req,res){
 	res.render("home");
@@ -122,7 +127,8 @@ app.get("/dashboard", function(req,res){
 		Student.findOne({username: req.session.username}, function(err , post){
 		console.log("hh");
 		console.log(post.points);
-	res.render("dashboard", {username: name , points: post.points});
+		console.log(post.quizresult);
+	res.render("dashboard", {username: name , points: post.points , quizres: post.quizresult});
 	});
 	}
 	else{
@@ -139,7 +145,6 @@ app.post("/videolec", function(req,res){
 	}
 	 var val = 0;
 	Student.findOne({username: req.session.username}, function(err , post){
-		console.log("hh");
 		console.log(post.points);
 		req.session.value =post.points  + values.length;
 	console.log(values.length);
@@ -151,6 +156,30 @@ app.post("/videolec", function(req,res){
     });
 	});
 	res.redirect("/videolec");
+});
+
+
+
+app.post("/quiz", function(req,res){
+	var c = 0;
+	var q1 = req.body.question1;
+	var q2 = req.body.question2;
+	if(q1 === "Yes")
+	{
+		c++;
+	}
+	if(q2 === "I am fine")
+	{
+		c++;
+	}
+	console.log(c);
+	req.session.quizr = c;
+	Student.findOneAndUpdate({username: req.session.username}, {quizresult: req.session.quizr}, function(err, foundList){
+      if (!err){
+		  foundList.save();
+      }
+    });
+	res.redirect("/quiz");
 });
 
 app.get("/logout", function(req,res){
@@ -165,7 +194,8 @@ app.post("/signup", function(req, res){
   const login = new Student ({
    username: req.body.username,
    pass: passhash,
-   points: 1
+   points: 1,
+   quizresult: 0
  });
   login.save(function(err){
    if (!err){
@@ -174,3 +204,19 @@ app.post("/signup", function(req, res){
  });
 
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
