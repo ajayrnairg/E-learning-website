@@ -10,12 +10,18 @@ app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
-app.use(session({secret: "Shh, its a secret!"}));
+app.use(session({
+	secret: 'Your secret key',
+	resave: true,
+	saveUninitialized: true
+}));
 var db = mongoose.connect("mongodb://localhost:27017/elearnDB", {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.set('useFindAndModify', false);
 var name="";
 const loginSchema = {
  username: String,
- pass: String
+ pass: String,
+ points: Number
 };
 
 const Student = mongoose.model("Student",loginSchema);
@@ -38,23 +44,49 @@ app.get("/signup", function(req,res){
 });
 
 app.get("/survey", function(req,res){
+	if(req.session.username){
 	res.render("survey");
+	}
+	else{
+		res.send("Not logged in");
+	}
 });
 
 app.get("/videolec", function(req,res){
+	if(req.session.username){
 	res.render("videolec");
+	}
+	else{
+		res.send("Not logged in");
+	}
 });
 
 app.get("/formulasheet", function(req,res){
+	if(req.session.username){
 	res.render("formulasheet");
+	}
+	else{
+		res.send("Not logged in");
+	}
 });
 
 app.get("/Books", function(req,res){
+	if(req.session.username){
 	res.render("Books");
+	}
+	else{
+		res.send("Not logged in");
+	}
+	
 });
 
 app.get("/Quiz", function(req,res){
+	if(req.session.username){
 	res.render("Quiz");
+	}
+	else{
+		res.send("Not logged in");
+	}
 });
 
 
@@ -72,6 +104,8 @@ app.post("/login", function(req, res){
 		}
 		else{
 			if(doc===true){
+				req.session.username = req.body.username;
+				req.session.pass = req.body.pass;
 				res.redirect("/dashboard");				
 			}
 			else if(doc===false)
@@ -84,16 +118,45 @@ app.post("/login", function(req, res){
 });
 
 app.get("/dashboard", function(req,res){
-	res.render("dashboard", {username: name});
+	if(req.session.username){
+		Student.findOne({username: req.session.username}, function(err , post){
+		console.log("hh");
+		console.log(post.points);
+	res.render("dashboard", {username: name , points: post.points});
+	});
+	}
+	else{
+		res.send("Not logged in");
+	}
 });
 
-app.get("/videolec", function(req,res){
-	req.session.cbx++;
+app.post("/videolec", function(req,res){
+	var values= [];
+	for(var i=0;i<req.body.cbx.length;i++)
+	{
+		values.push(req.body.cbx[i]);
+		
+	}
+	 var val = 0;
+	Student.findOne({username: req.session.username}, function(err , post){
+		console.log("hh");
+		console.log(post.points);
+		req.session.value =post.points  + values.length;
+	console.log(values.length);
+	console.log(req.session.value);
+	Student.findOneAndUpdate({username: req.session.username}, {points: req.session.value}, function(err, foundList){
+      if (!err){
+		  foundList.save();
+      }
+    });
+	});
+	res.redirect("/videolec");
 });
 
-app.post("/dash", function(req,res){
-	res.render("dash", {points: req.session.cbx});
-});
+app.get("/logout", function(req,res){
+	req.session.destroy();
+	res.redirect("/");
+})
 
 app.post("/signup", function(req, res){
 	var salt = "Xy";
@@ -101,7 +164,8 @@ app.post("/signup", function(req, res){
    var passhash = hashed + salt;  
   const login = new Student ({
    username: req.body.username,
-   pass: passhash
+   pass: passhash,
+   points: 1
  });
   login.save(function(err){
    if (!err){
