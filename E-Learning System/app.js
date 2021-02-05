@@ -31,13 +31,25 @@ const moduleSchema = {
 	module: String,
 	quizresult: Number
 };
+const loginSchema1 = {
+	username: String,
+	pass: String
+
+};
+
 
 
 const Student = mongoose.model("Student",loginSchema);
 const Module = mongoose.model("Module",moduleSchema);
-app.get("/teacher", function(req,res){
-	res.render("teacher");
+const Teacher = mongoose.model("Teacher", loginSchema1);
+app.get("/teacher/signup", function(req,res){
+	res.render("teachersignup");
 });
+
+app.get("/teacher/login", function(req, res){
+	res.render("teacherlogin");
+});
+
 
 app.get("/", function(req,res){
 	res.render("home");
@@ -89,7 +101,7 @@ app.get("/Books", function(req,res){
 	else{
 		res.send("Not logged in");
 	}
-	
+
 });
 
 app.get("/Quiz", function(req,res){
@@ -118,12 +130,37 @@ app.post("/login", function(req, res){
 			if(doc===true){
 				req.session.username = req.body.username;
 				req.session.pass = req.body.pass;
-				res.redirect("/dashboard");				
+				res.redirect("/dashboard");
 			}
 			else if(doc===false)
 			{
 				console.log("Invalid username or password");
 				res.redirect("/login");
+			}
+		}
+	});
+});
+app.post("/teacher/login", function(req, res){
+	var salt = "Xy";
+	var hashed = crypto.createHash('md5').update(req.body.pass).digest("hex");
+   var passhash = hashed + salt;
+	name = req.body.username;
+	const pass= req.body.pass;
+	Teacher.exists({username: name , pass: passhash}, function(err,doc){
+		if(err){
+			console.log(err);
+			console.log("Invalid username or password");
+		}
+		else{
+			if(doc===true){
+				req.session.username1 = req.body.username;
+				req.session.pass1 = req.body.pass;
+				res.redirect("/teacher/dashboard");
+			}
+			else if(doc===false)
+			{
+				console.log("Invalid username or password");
+				res.redirect("/teacherlogin");
 			}
 		}
 	});
@@ -151,7 +188,7 @@ app.post("/videolec", function(req,res){
 	for(var i=0;i<req.body.cbx.length;i++)
 	{
 		values.push(req.body.cbx[i]);
-		
+
 	}
 	 var val = 0;
 	Student.findOne({username: req.session.username}, function(err , post){
@@ -169,6 +206,19 @@ app.post("/videolec", function(req,res){
 });
 
 
+app.get("/teacher/dashboard", function(req,res){
+	if(req.session.username1){
+		Teacher.findOne({username: req.session.username1}, function(err , post){
+		console.log("hh");
+		console.log(post.points);
+		console.log(post.quizresult);
+	res.render("teacherdashboard", {username: name , points: post.points , quizres: post.quizresult});
+	});
+	}
+	else{
+		res.send("Not logged in");
+	}
+});
 
 app.post("/quiz", function(req,res){
 	console.log(req.body.moduleone);
@@ -226,11 +276,27 @@ app.get("/logout", function(req,res){
 	req.session.destroy();
 	res.redirect("/");
 })
+app.post("/teacher/signup", function(req, res){
+	var salt = "Xy";
+	var hashed = crypto.createHash('md5').update(req.body.pass).digest("hex");
+   var passhash = hashed + salt;
+  const login1 = new Teacher ({
+   username: req.body.username,
+   pass: passhash
+
+ });
+  login1.save(function(err){
+   if (!err){
+	   res.redirect("/");
+   }
+ });
+
+});
 
 app.post("/signup", function(req, res){
 	var salt = "Xy";
 	var hashed = crypto.createHash('md5').update(req.body.pass).digest("hex");
-   var passhash = hashed + salt;  
+   var passhash = hashed + salt;
   const login = new Student ({
    username: req.body.username,
    pass: passhash,
@@ -257,23 +323,7 @@ app.post("/signup", function(req, res){
 	 quizresult: 0
  });
  mod1.save(function(err){
-	console.log("Success mod 2"); 
+	console.log("Success mod 2");
  });
 res.redirect("/login");
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
