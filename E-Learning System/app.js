@@ -23,11 +23,18 @@ var name="";
 const loginSchema = {
  username: String,
  pass: String,
- points: Number,
- quizresult: Number
+ points: Number
 };
 
+const moduleSchema = {
+	username: String,
+	module: String,
+	quizresult: Number
+};
+
+
 const Student = mongoose.model("Student",loginSchema);
+const Module = mongoose.model("Module",moduleSchema);
 app.get("/teacher", function(req,res){
 	res.render("teacher");
 });
@@ -124,11 +131,14 @@ app.post("/login", function(req, res){
 
 app.get("/dashboard", function(req,res){
 	if(req.session.username){
+		Module.find({username: req.session.username}, function(err , postss){
+		console.log(postss);
 		Student.findOne({username: req.session.username}, function(err , post){
 		console.log("hh");
 		console.log(post.points);
 		console.log(post.quizresult);
-	res.render("dashboard", {username: name , points: post.points , quizres: post.quizresult});
+	res.render("dashboard", {username: name , points: post.points , modules: postss});
+	});
 	});
 	}
 	else{
@@ -161,25 +171,55 @@ app.post("/videolec", function(req,res){
 
 
 app.post("/quiz", function(req,res){
+	console.log(req.body.moduleone);
+	var m = req.body.moduleone;
+	var m1 = req.body.moduletwo;
+	if(m === "Module1")
+	{
 	var c = 0;
-	var q1 = req.body.question1;
-	var q2 = req.body.question2;
-	if(q1 === "Yes")
+	var qmodone1 = req.body.question1;
+	var qmodone2 = req.body.question2;
+	if(qmodone1 === "Yes")
 	{
 		c++;
 	}
-	if(q2 === "I am fine")
+	if(qmodone2 === "I am fine")
 	{
 		c++;
 	}
 	console.log(c);
 	req.session.quizr = c;
-	Student.findOneAndUpdate({username: req.session.username}, {quizresult: req.session.quizr}, function(err, foundList){
+	console.log(m);
+	Module.findOneAndUpdate({username: req.session.username , module: m} ,  {quizresult: req.session.quizr}, function(err, foundList){
       if (!err){
 		  foundList.save();
       }
     });
 	res.redirect("/quiz");
+	}
+	if(m1 === "Module2")
+	{
+	var c1 = 0;
+	var qmodtwo1 = req.body.question1;
+	var qmodtwo2 = req.body.question2;
+	if(qmodtwo1 === "I am fine")
+	{
+		c1++;
+	}
+	if(qmodtwo2 === "I am ok")
+	{
+		c1++;
+	}
+	console.log(c1);
+	req.session.quizrr = c1;
+	console.log(m1);
+	Module.findOneAndUpdate({username: req.session.username , module: m1} ,  {quizresult: req.session.quizrr}, function(err, foundList){
+      if (!err){
+		  foundList.save();
+      }
+    });
+	res.redirect("/quiz");
+	}
 });
 
 app.get("/logout", function(req,res){
@@ -194,15 +234,32 @@ app.post("/signup", function(req, res){
   const login = new Student ({
    username: req.body.username,
    pass: passhash,
-   points: 1,
-   quizresult: 0
+   points: 1
  });
   login.save(function(err){
    if (!err){
-	   res.redirect("/");
+	   console.log("Success login");
    }
  });
-
+ const mod = new Module ({
+	 username: req.body.username,
+	 module: "Module1",
+	 quizresult: 0
+ });
+ mod.save(function(err){
+	 if(!err){
+		 console.log("Success mod 1");
+	 }
+ });
+ const mod1 = new Module ({
+	 username: req.body.username,
+	 module: "Module2",
+	 quizresult: 0
+ });
+ mod1.save(function(err){
+	console.log("Success mod 2"); 
+ });
+res.redirect("/login");
 });
 
 

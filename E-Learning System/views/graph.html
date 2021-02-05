@@ -1,39 +1,64 @@
-<!DOCTYPE html>  
- <html>  
-      <head>  
-           <title>Webslesson Tutorial | Show JSON Data in Jquery Datatables</title>  
-           <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />  
-           <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>  
-           <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  
-           <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.23/datatables.min.css"/>
-<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.23/datatables.min.js"></script>  
-      </head>  
-      <body>  
-           <br /><br />  
-           <div class="container">  
-                <h1 align="center">Show JSON Data in Jquery Datatables</h3><br />  
-                <h3 align="center">Employee Database</h3><br />  
-                <table id="data-table" class="table table-bordered">  
-                     <thead>  
-                          <tr>  
-                               <th>Name</th>  
-                               <th>Gender</th>  
-                               <th>Designation</th>  
-                          </tr>  
-                     </thead>  
-                </table>  
-           </div>  
-      </body>  
- </html>  
- <script>  
- $(document).ready(function(){  
-      $('#data-table').DataTable({  
-           "ajax"     :     "employee_data.json",  
-           "columns"     :     [  
-                {     "data"     :     "name"     },  
-                {     "data"     :     "gender"},  
-                {     "data"     :     "designation"}  
-           ]  
-      });  
- });  
- </script>  
+<%- include("partials/header2"); -%>
+
+<div class="sidenav">
+  <a type="submit" id="buttonmodule1" href="#">Module 1</a>
+  <a type="submit" id="buttonmodule2" href="#">Module 2</a>
+</div>
+<div class="container-fuild-quiz">
+    <form class="" action="/quiz" name="moduleone" method="post">
+  <div class="popup">
+   <div class="popup-content">
+   <p>1. Hello ?</p>
+   <img src="close1.jpg" alt="close" class="close">
+   <p><input type="radio" name="question1" value="Yes">A. Yes</p>
+   <p><input type="radio" name="question1" value="I am fine">B. I am fine</p>
+   <p><input type="radio" name="question1" value="I am ok">C. I am ok</p>
+    <p>2. Hungry? ?</p>
+	<p><input type="radio" name="question2" value="Yes">A. Yes</p>
+   <p><input type="radio" name="question2" value="I am fine">B. I am fine</p>
+   <p><input type="radio" name="question2" value="I am ok">C. I am ok</p>
+   <button name="moduleone" value="Module1" type="submit" class="btn btn-primary">Submit</button> 
+   </div>
+   </div>
+</form>
+</div>
+
+<div class="container-fuild-quiz">
+    <form class="" action="/quiz" name="moduletwo" method="post">
+  <div class="popup1">
+   <div class="popup-contents1">
+   <p>1. Hello ?</p>
+   <img src="close1.jpg" alt="close" class="close1">
+   <p><input type="radio" name="question1" value="aaaaaaaa">A. Yes</p>
+   <p><input type="radio" name="question1" value="Yes">B. I am fine</p>
+   <p><input type="radio" name="question1" value="I am ok">C. I am ok</p>
+    <p>2. Hungry? ?</p>
+	<p><input type="radio" name="question2" value="Yes">A. Yes</p>
+   <p><input type="radio" name="question2" value="I am fine">B. I am fine</p>
+   <p><input type="radio" name="question2" value="I am ok">C. I am ok</p>
+   <button name="moduletwo" value="Module2" type="submit" class="btn btn-primary">Submit</button>
+    </div>
+	</div>
+</form>
+</div>
+
+<script>
+    document.getElementById("buttonmodule1").addEventListener("click", function(){
+	    document.querySelector(".popup").style.display="flex";
+	});
+	
+	document.querySelector(".close").addEventListener("click", function(){
+	    document.querySelector(".popup").style.display="none";
+	});
+	
+	document.getElementById("buttonmodule2").addEventListener("click", function(){
+	    document.querySelector(".popup1").style.display="flex";
+	});
+	
+	document.querySelector(".close1").addEventListener("click", function(){
+	    document.querySelector(".popup1").style.display="none";
+	});
+</script>
+
+
+<%- include("partials/footer1"); -%>

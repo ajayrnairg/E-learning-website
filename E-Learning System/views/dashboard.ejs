@@ -1,7 +1,9 @@
 <%- include("partials/header1"); -%>
 
 <h1>Number of times <%= points %></h1>
-<h1>Result of quiz is <%= quizres %></h1> 
+<%  modules.forEach(function(post){ %>
+<h1>Result of quiz for <%= post.module %> is <%= post.quizresult %></h1>
+ <% }) %> 
 <div class="dashboardheading">
 <h1>Welcome <%= username %></h1>
 </div>
