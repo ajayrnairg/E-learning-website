@@ -208,12 +208,12 @@ app.post("/videolec", function(req,res){
 
 app.get("/teacher/dashboard", function(req,res){
 	if(req.session.username1){
-		Teacher.findOne({username: req.session.username1}, function(err , post){
+		Student.find({}, function(err , postsse){
+			Teacher.findOne({username: req.session.username1}, function(err , post){
 		console.log("hh");
-		console.log(post.points);
-		console.log(post.quizresult);
-	res.render("teacherdashboard", {username: name , points: post.points , quizres: post.quizresult});
-	});
+	    res.render("teacherdashboard", {username: name , students: postsse});
+	    });
+		});
 	}
 	else{
 		res.send("Not logged in");
