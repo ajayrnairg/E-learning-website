@@ -102,7 +102,109 @@ ul.b{
   padding: 40px 25px;
   background: rgba(255, 255, 255, 1);
   box-shadow: 2px 3px 5px 4px #000000;
+  
 }
+
+.containerdashboard-graph{
+  height: 350px;
+  width: 1000px;
+  box-sizing: border-box;
+  transform: translate(15%,-15%);
+  padding: 40px 25px;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 2px 3px 5px 4px #000000;
+  justify-content: center;
+	align-items: center;
+	background: #4188ec;
+}
+
+.graphbar{
+	width: 600px;
+	height: 300px;
+	display:block;
+}
+
+.numbers{
+	color: #fff;
+	margin: 0;
+	padding: 0;
+	width: 50px;
+	height: 100%;
+	display: inline-block;
+	float: left;
+}
+
+.numbers li{
+	list-style: none;
+	height: 100px;
+	position: relative;
+	bottom: 80px;
+}
+
+.numbers span{
+	font-size: 15px;
+	font-weight: 600;
+	position: absolute;
+	bottom: 0;
+	right: 10px;
+	
+}
+
+
+.bars{
+	color: #fff;
+	font-size: 15px;
+	font-weight: 600;
+	background: #a76ebf;
+	margin: 0;
+	padding: 0;
+	display: inline-block;
+	width: 500px;
+	height: 230px;
+	box-shadow:0 0 10px 0 #a76ebf;
+	border-radius: 5px;
+}
+
+.bars li{
+	display: table-cell;
+	width: 100px;
+	height: 230px;
+	position: relative;
+}
+
+.bars span{
+	width: 100%;
+	position: absolute;
+	bottom: -50px;
+	text-align: center;
+}
+
+.bars .bar{
+	display: block;
+	background: #6ebf96;
+	width: 50px;
+	position: absolute;
+	bottom: 0;
+	margin-left: 25px;
+	text-align: center;
+	box-shadow: 0 0 10px 0 #f3988c;
+	transition: 0.5s;
+	transition-property: background;
+}
+
+.bars .bar:hover{
+	background: #43d110;
+	cursor: pointer;
+	
+}
+
+.bars .bar:before{
+	color: #fff;
+	content: attr(data-percentage) '%';
+	position: relative;
+	bottom: 20px;
+}
+
 
 #formulasheets{
 	padding: 50px;
@@ -132,3 +234,4 @@ ul.b{
 	padding: 50px;
 	margin-left: 5rem;
 }
+

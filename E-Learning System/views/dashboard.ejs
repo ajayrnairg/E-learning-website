@@ -72,24 +72,30 @@
 </section>
 
 <section id="quiz">
-    <div class="containerdashboard">
-	    <div class="row">
-		    <div class="col-lg-6">
-			    <div class="videolecheading">
-				    <p>Quizzes</p>
-				</div>
-			</div>
-			<div class="col-lg-6">
-			  <div class="quizssss">
-				   <p><a href="#">Complex Numbers</a></p>
-				   <p><a href="#">Integration</a></p>
-				   <p><a href="#">Probability</a></p>
-				   <p><a href="#">Differentiation</a></p>
-				   <p><a href="#">Trigonometric</a></p>
-				</div>
-			</div>
-		</div>
+    <div class="containerdashboard-graph">
+	  <div class="graphbar">
+	    <ul class="numbers">
+		    <li><span>100%</span></li>
+			<li><span>50%</span></li>
+			<li><span>0%</span></li>
+		</ul>
+		<ul class="bars">
+			<%  modules.forEach(function(post){ %>
+                <li><div class="bar" data-percentage="<%= (post.quizresult/2*100) %>"></div><span><%= post.module %></span></li>
+             <% }) %>  
+		</ul>
+	  </div>
 	</div>
+	<script type="text/javascript">
+	$(function(){
+	    $('.bars li .bar').each(function(key, bar){
+		    var percentage = $(this).data('percentage');
+			$(this).animate({
+			 'height': percentage + '%'
+			},1000);
+		});
+	});
+	</script>
 </section>
 
 <section id="survey">
