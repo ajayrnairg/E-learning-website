@@ -174,7 +174,7 @@ app.get("/dashboard", function(req,res){
 		console.log("hh");
 		console.log(post.points);
 		console.log(post.quizresult);
-	res.render("dashboard", {username: name , points: post.points , modules: postss});
+	res.render("dashboard", {username: req.session.username , points: post.points , modules: postss});
 	});
 	});
 	}
@@ -327,3 +327,12 @@ app.post("/signup", function(req, res){
  });
 res.redirect("/login");
 });
+
+app.get("/progress/:postId", function(req, res){
+  const requestedPostId = req.params.postId;
+  Student.findOne({_id: requestedPostId}, function(err, postsss){
+   req.session.username = postsss.username;
+   res.redirect("/dashboard");
+   });
+ });
+

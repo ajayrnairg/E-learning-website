@@ -9,6 +9,7 @@
    <tr>
      <th>Username</th>
 	 <th>Points</th>
+	 <th>Dashboard</th>
    </tr>
  </thead>
  <tbody>
@@ -16,6 +17,7 @@
 	<tr>
      <td><%= postss.username %></td>
 	 <td><%= postss.points %></td>
+	 <td><a href="/progress/<%=postss._id%>">Dashboard</a></td>
 	</tr>
 	<% }) %>
  </tbody>  
