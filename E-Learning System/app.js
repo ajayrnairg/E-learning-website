@@ -37,11 +37,17 @@ const loginSchema1 = {
 
 };
 
-
+const counselingSchema = {
+	studentusername: String,
+	teacherusername: String,
+	description: String,
+	time: String
+}
 
 const Student = mongoose.model("Student",loginSchema);
 const Module = mongoose.model("Module",moduleSchema);
 const Teacher = mongoose.model("Teacher", loginSchema1);
+const Counseling = mongoose.model("Counseling", counselingSchema);
 app.get("/teacher/signup", function(req,res){
 	res.render("teachersignup");
 });
@@ -66,6 +72,24 @@ app.get("/login", function(req,res){
 app.get("/signup", function(req,res){
 	res.render("signup");
 });
+
+app.get("/counseling", function(req,res){
+	if(req.session.username){
+		Teacher.find({}, function(err , posttea){
+		console.log("hh");
+		console.log("postea");
+	    res.render("counseling", {teachers: posttea});
+	    });
+	}
+	else{
+		res.send("Not logged in");
+	}
+});
+
+app.get("/doubtsolving", function(req,res){
+	res.render("doubtsolving");
+});
+
 
 app.get("/survey", function(req,res){
 	if(req.session.username){
@@ -94,6 +118,14 @@ app.get("/formulasheet", function(req,res){
 	}
 });
 
+app.get("/ttcounseling", function(req,res){
+		Counseling.find({}, function(err , posttacoun){
+		console.log("hh");
+		console.log(posttacoun);
+	    res.render("ttcounseling", {counselingsss: posttacoun});
+	    });
+});
+
 app.get("/Books", function(req,res){
 	if(req.session.username){
 	res.render("Books");
@@ -110,6 +142,20 @@ app.get("/Quiz", function(req,res){
 	}
 	else{
 		res.send("Not logged in");
+	}
+});
+
+app.get("/teacher/counselling", function(req,res){
+	if(req.session.username1)
+	{
+	Counseling.find({}, function(err , postteacoun){
+		console.log("hh");
+		console.log(postteacoun);
+	    res.render("teachercounseling", {counselingss: postteacoun});
+	    });
+	}
+	else{
+		res.send("Not log in");
 	}
 });
 
@@ -223,6 +269,22 @@ app.post("/videolec", function(req,res){
 	});
 	}
 	res.redirect("/videolec");
+});
+
+
+app.post("/teacher/counselling", function(req,res){
+	req.session.username = req.body.studentsub;
+	req.session.description = req.body.description;
+	console.log(req.body.time);
+	var tm = req.body.time;
+	console.log("I am"+tm);
+	Counseling.findOneAndUpdate({description: req.body.description}, {time: tm}, function(err, foundListss){
+      if (!err){
+		  foundListss.save();
+		  console.log("success updated time");
+      }
+    });
+	res.redirect("/ttcounseling");
 });
 
 
@@ -355,14 +417,26 @@ app.get("/progress/:postId", function(req, res){
    res.redirect("/dashboard");
    });
  });
- 
- app.get("/edit/:postId", function(req,res){
-	const requestedId = req.params.postId;
-    Student.findOne({_id: requestedId}, function(err, foundList){
-      if (!err){
-		  
-      }
-    });
-	res.redirect("/quiz");
+
+
+app.post("/counseling", function(req,res){
+	console.log(req.body.studentsubmit);
+	req.session.username1 = req.body.studentsubmit;
+	const coun = new Counseling({
+	 studentusername: req.session.username,
+	 teacherusername: req.body.studentsubmit,
+	 description: req.body.description,
+	 time: "0"
  });
+ coun.save(function(err){
+	console.log("Success inserted counselling");
+ });
+ res.redirect("/teacher/counselling");
+});
+
+
+
+
+
+
 
