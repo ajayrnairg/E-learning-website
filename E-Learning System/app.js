@@ -185,12 +185,31 @@ app.get("/dashboard", function(req,res){
 
 app.post("/videolec", function(req,res){
 	var values= [];
+	if(req.body.cbx === "option1")
+	{
+		values.push(req.body.cbx);
+		  var val = 0;
+	    console.log(values);
+	    Student.findOne({username: req.session.username}, function(err , post){
+		console.log(post.points);
+		req.session.value =post.points  + values.length;
+	    console.log(values.length);
+	    console.log(req.session.value);
+	    Student.findOneAndUpdate({username: req.session.username}, {points: req.session.value}, function(err, foundList){
+        if (!err){
+		  foundList.save();
+       }
+    });
+	});
+	}
+	else{
 	for(var i=0;i<req.body.cbx.length;i++)
 	{
 		values.push(req.body.cbx[i]);
 
 	}
 	 var val = 0;
+	 console.log(values);
 	Student.findOne({username: req.session.username}, function(err , post){
 		console.log(post.points);
 		req.session.value =post.points  + values.length;
@@ -202,6 +221,7 @@ app.post("/videolec", function(req,res){
       }
     });
 	});
+	}
 	res.redirect("/videolec");
 });
 
@@ -334,5 +354,15 @@ app.get("/progress/:postId", function(req, res){
    req.session.username = postsss.username;
    res.redirect("/dashboard");
    });
+ });
+ 
+ app.get("/edit/:postId", function(req,res){
+	const requestedId = req.params.postId;
+    Student.findOne({_id: requestedId}, function(err, foundList){
+      if (!err){
+		  
+      }
+    });
+	res.redirect("/quiz");
  });
 
