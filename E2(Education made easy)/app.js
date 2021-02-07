@@ -21,6 +21,7 @@ app.use(session({
 var db = mongoose.connect("mongodb://localhost:27017/educationDB", {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.set('useFindAndModify', false);
 var name="";
+var warnsignlog="";
 const loginSchema = {
  username: String,
  pass: String,
@@ -56,6 +57,7 @@ const Counseling = mongoose.model("Counseling", counselingSchema);
 
 
 app.get("/", function(req,res){
+	console.log(warnsignlog);
 	res.render("home");
 });
 
@@ -64,6 +66,14 @@ app.post("/", function(req,res){
 	var m1 = req.body.login;
 	if(m === "signup")
 	{
+		Student.exists({username: req.body.uname , email: req.body.email}, function(err,doce){
+			if(doce === true)
+			{
+				alert("Account already existsplease login");
+				res.redirect("/");
+			}
+			else if(doce === false)
+			{
 	    var salt = "Xy";
 	    var hashed = crypto.createHash('md5').update(req.body.pass).digest("hex");
         var passhash = hashed + salt;
@@ -82,6 +92,8 @@ app.post("/", function(req,res){
     }
 	res.redirect("/");
     });
+	}
+	});
 	}
 	if(m1 === "login")
 	{
@@ -119,9 +131,21 @@ app.post("/", function(req,res){
 
 
 app.get("/dashboard", function(req,res){
-	res.render("dashboard");
+	if(req.session.username)
+	{	
+	res.render("dashboard", {name: req.session.username});
+	}
+	else{
+		res.send("Not logged in");
+	}
+});
+
+app.get("/logout", function(req,res){
+	req.session.destroy();
+	res.redirect("/");
 });
 
 app.listen(3000, function() {
   console.log("Server started on port 3000");
 });
+

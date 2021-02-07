@@ -141,7 +141,7 @@
                 <p>Quizzes</p>
                 <p>PYQ</p>
                 <p>Progress monitor</p>
-                <button class="btn btn-lg btn-outline-dark btn-block" data-bs-toggle="modal" data-bs-target="#exampleModal"type="button">Sign Up</button>
+                <button type="button" class="btn btn-lg btn-dark btn-block signinin" onclick="document.getElementById('id02').style.display='block'" style="width:auto;">Sign Up </button>
               </div>
             </div>
           </div>
@@ -162,7 +162,7 @@
                 <p>Quizzes</p>
                 <p>PYQ</p>
                 <p>Study Monitor</p>
-                <button class="btn btn-lg btn-dark btn-block" data-bs-toggle="modal" data-bs-target="#exampleModal"type="button">Sign Up</button>
+				<button type="button" class="btn btn-lg btn-dark btn-block signinin" onclick="document.getElementById('id02').style.display='block'" style="width:auto;">Sign Up </button>
               </div>
             </div>
           </div>
@@ -215,6 +215,7 @@
 	  <label for="psw"><b>Name of instition</b></label>
       <input type="text" placeholder="Enter institution" name="insttt" required>
 	  
+	  <label for="psw"><b>Choose your plan</b></label>
 	  <select class="form-select plan" aria-label="Default select example" name="plan">
        <option selected>Choose your plan </option>
        <option value="free">Free</option>
@@ -237,7 +238,6 @@
       <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
       <img src="profile.png" alt="Avatar" class="avatar">
     </div>
-
     <div class="container">
       <label for="uname"><b>Username</b></label>
       <input type="text" placeholder="Enter Username" name="uname" required>
@@ -245,6 +245,8 @@
       <label for="psw"><b>Password</b></label>
       <input type="password" placeholder="Enter Password" name="pass" required>
 	  
+	  
+	   <label for="psw"><b>Choose your plan</b></label>
 	  <select class="form-select plan" aria-label="Default select example" name="planlogin">
        <option selected>Choose your plan </option>
        <option value="free">Free</option>
