@@ -2,6 +2,10 @@
 <h1>Number of times <%= points %></h1>
 <%  modules.forEach(function(post){ %>
 <h1>Result of quiz for <%= post.module %> is <%= post.quizresult %></h1>
+ <% }) %>
+<h1>Rank is <%= ranksss %></h1>
+<%  students.forEach(function(post){ %>
+<h1>Rank is <%= post._id %> and rank is <%= post.username %></h1>
  <% }) %> 
 <div class="dashboardheading">
 <h1>Welcome <%= username %></h1>

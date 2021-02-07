@@ -20,6 +20,9 @@ app.use(session({
 var db = mongoose.connect("mongodb://localhost:27017/elearnDB", {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.set('useFindAndModify', false);
 var name="";
+var rankss = [];
+
+var ranks=[];
 const loginSchema = {
  username: String,
  pass: String,
@@ -43,15 +46,19 @@ const counselingSchema = {
 	description: String,
 	time: String
 }
-
+const rankingSchema = {
+	username: String,
+	rankss: Number 
+}
 const Student = mongoose.model("Student",loginSchema);
 const Module = mongoose.model("Module",moduleSchema);
 const Teacher = mongoose.model("Teacher", loginSchema1);
 const Counseling = mongoose.model("Counseling", counselingSchema);
+const Ranking = mongoose.model("Ranking", rankingSchema);
 app.get("/teacher/signup", function(req,res){
 	res.render("teachersignup");
 });
-
+console.log("ok");
 app.get("/teacher/login", function(req, res){
 	res.render("teacherlogin");
 });
@@ -214,15 +221,38 @@ app.post("/teacher/login", function(req, res){
 
 app.get("/dashboard", function(req,res){
 	if(req.session.username){
+		Student.find({}, "username points", function(err , rank){
+		Ranking.findOne({username: req.session.username}, function(err , postta){
+		Ranking.remove({}, function(err){
+			console.log("removed");
+		});
+		Student.find({}, function(err , stu){
+		for(var i=0;i<rank.length;i++)
+		{
+		const rankeeo = new Ranking({
+			username: rank[i].username,
+			rankss: i+1
+		});
+		rankeeo.save(function(err){
+ 	    console.log("Success rankeeo");
+        });
+		}
+	    if(err){
+		console.log(err);
+	    }
 		Module.find({username: req.session.username}, function(err , postss){
 		console.log(postss);
 		Student.findOne({username: req.session.username}, function(err , post){
 		console.log("hh");
+		var mm = post._id;
 		console.log(post.points);
 		console.log(post.quizresult);
-	res.render("dashboard", {username: req.session.username , points: post.points , modules: postss});
+	res.render("dashboard", {username: req.session.username , points: post.points , modules: postss , ranksss: postta.rankss , students: stu});
 	});
 	});
+	});
+	});
+    }).sort('field -points');
 	}
 	else{
 		res.send("Not logged in");
@@ -408,6 +438,9 @@ app.post("/signup", function(req, res){
 	console.log("Success mod 2");
  });
 res.redirect("/login");
+});
+
+app.get("/rank", function(req,res){
 });
 
 app.get("/progress/:postId", function(req, res){
