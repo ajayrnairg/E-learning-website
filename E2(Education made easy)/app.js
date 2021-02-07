@@ -8,6 +8,7 @@ const crypto = require("crypto");
 const session = require('express-session');
 const fs = require("fs");
 var XLSV = require("xlsx");
+var alert = require("alert");
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -23,6 +24,10 @@ var name="";
 const loginSchema = {
  username: String,
  pass: String,
+ email: String,
+ address: String,
+ institution: String,
+ plan: String,
  points: Number
 };
 
@@ -52,6 +57,64 @@ const Counseling = mongoose.model("Counseling", counselingSchema);
 
 app.get("/", function(req,res){
 	res.render("home");
+});
+
+app.post("/", function(req,res){
+	var m = req.body.signup;
+	var m1 = req.body.login;
+	if(m === "signup")
+	{
+	    var salt = "Xy";
+	    var hashed = crypto.createHash('md5').update(req.body.pass).digest("hex");
+        var passhash = hashed + salt;
+        const login = new Student ({
+        username: req.body.uname,
+        pass: passhash,
+		email: req.body.email,
+		address: req.body.addr,
+		institution: req.body.insttt,
+		plan: req.body.plan,
+        points: 1
+    });
+    login.save(function(err){
+    if (!err){
+	   console.log("Success inserted account");
+    }
+	res.redirect("/");
+    });
+	}
+	if(m1 === "login")
+	{
+		var salt = "Xy";
+	var hashed = crypto.createHash('md5').update(req.body.pass).digest("hex");
+   var passhash = hashed + salt;
+	var name = req.body.uname;
+	const pass= req.body.pass;
+	if(req.body.uname<1 && req.body.pass<1)
+	{
+		alert("Please enter details");
+	}
+	Student.exists({username: name , pass: passhash , plan: req.body.planlogin}, function(err,doc){
+		if(err){
+			console.log(err);
+			console.log("Invalid username or password");
+		}
+		else{
+			if(doc===true){
+				req.session.username = req.body.uname;
+				req.session.pass = req.body.pass;
+				req.session.plan = req.body.planlogin;
+				res.redirect("/dashboard");
+			}
+			else if(doc===false)
+			{
+					alert("Invalid username or password or enterned invalid plan");
+				console.log("Invalid username or password or enterned invalid plan");
+				res.redirect("/");
+			}
+		}
+	});
+	}
 });
 
 

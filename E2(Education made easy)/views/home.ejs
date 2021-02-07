@@ -36,7 +36,7 @@
               <a class="nav-link" href="#contact">Contact</a>
             </li>
             <li>
-               <button type="button" class="btn btn-outline-warning signinin" onclick="document.getElementById('id02').style.display='block'" style="width:auto;">Sign In </button>
+               <button type="button" class="btn btn-outline-warning signinin" onclick="document.getElementById('id02').style.display='block'" style="width:auto;">Sign Up </button>
             </li>
             <li>
               <button type="button" class="btn btn-outline-warning signinin" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Sign In </button>
@@ -171,7 +171,7 @@
   </section>
   <section id="press">
     <h2>Read about our success here!!</h2>
-<img src="images/news.PNG" alt="news-images">
+<img src="news.PNG" alt="news-images">
   </section>
   <section id="contact">
 <h2>Contact information</h2>
@@ -193,7 +193,7 @@
   <!-- Modal -->
 <div id="id02" class="modal">
   
-  <form class="modal-content animate" action="/action_page.php" method="post">
+  <form class="modal-content animate" action="/" method="post">
     <div class="imgcontainer">
       <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
       <img src="profile.png" alt="Avatar" class="avatar">
@@ -207,21 +207,22 @@
       <input type="text" placeholder="Enter email" name="email" required>
 
       <label for="psw"><b>Password</b></label>
-      <input type="password" placeholder="Enter Password" name="psw" required>
+      <input type="password" placeholder="Enter Password" name="pass" required>
 	  
 	  <label for="psw"><b>Address</b></label>
-      <input type="password" placeholder="Enter Address" name="addr" required>
+      <input type="text" placeholder="Enter Address" name="addr" required>
 	  
 	  <label for="psw"><b>Name of instition</b></label>
-      <input type="password" placeholder="Enter institution" name="insttt" required>
+      <input type="text" placeholder="Enter institution" name="insttt" required>
 	  
-	  <select class="form-select plan" aria-label="Default select example">
+	  <select class="form-select plan" aria-label="Default select example" name="plan">
        <option selected>Choose your plan </option>
        <option value="free">Free</option>
        <option value="paid">Paid</option>
       </select>
         
-      <button type="submit">Create account</button>
+      <button type="submit" name="signup" value="signup">Create account</button>
+	  <button type="button" onclick="document.getElementById('id02').style.display='none'" class="cancelbtn">Cancel</button>
       <label>
         <input type="checkbox" checked="checked" name="remember"> Remember me
       </label>
@@ -231,7 +232,7 @@
   
 <div id="id01" class="modal">
   
-  <form class="modal-content animate" action="/action_page.php" method="post">
+  <form class="modal-content animate" action="/" method="post">
     <div class="imgcontainer">
       <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
       <img src="profile.png" alt="Avatar" class="avatar">
@@ -242,9 +243,15 @@
       <input type="text" placeholder="Enter Username" name="uname" required>
 
       <label for="psw"><b>Password</b></label>
-      <input type="password" placeholder="Enter Password" name="psw" required>
+      <input type="password" placeholder="Enter Password" name="pass" required>
+	  
+	  <select class="form-select plan" aria-label="Default select example" name="planlogin">
+       <option selected>Choose your plan </option>
+       <option value="free">Free</option>
+       <option value="paid">Paid</option>
+      </select>
         
-      <button type="submit">Login</button>
+      <button type="submit" name="login" value="login">Login</button>
       <label>
         <input type="checkbox" checked="checked" name="remember"> Remember me
       </label>
