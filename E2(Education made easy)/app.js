@@ -9,6 +9,7 @@ const session = require('express-session');
 const fs = require("fs");
 var XLSV = require("xlsx");
 var alert = require("alert");
+const perf = require("execution-time")();
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -22,6 +23,7 @@ var db = mongoose.connect("mongodb://localhost:27017/educationDB", {useNewUrlPar
 mongoose.set('useFindAndModify', false);
 var name="";
 var warnsignlog="";
+var timeof="";
 const loginSchema = {
  username: String,
  pass: String,
@@ -29,7 +31,8 @@ const loginSchema = {
  address: String,
  institution: String,
  plan: String,
- points: Number
+ points: Number,
+ timeep: Number 
 };
 
 const moduleSchema = {
@@ -97,7 +100,8 @@ app.post("/", function(req,res){
 		address: req.body.addr,
 		institution: req.body.insttt,
 		plan: req.body.plan,
-        points: 1
+        points: 1,
+		timeep: 0
     });
     login.save(function(err){
     if (!err){
@@ -216,7 +220,22 @@ app.post("/teacher/home", function(req,res){
 app.get("/dashboard", function(req,res){
 	if(req.session.username)
 	{
-	res.render("dashboard", {name: req.session.username});
+	perf.start();
+	Student.findOne({username: req.session.username}, function(err , tempe){
+		req.session.time = tempe.timeep + timeof;
+		Student.findOneAndUpdate({username: req.session.username}, {timeep: req.session.time} , function(err , uptime){
+			if(!err){
+				uptime.save();
+			}
+		});
+		var s = Math.floor(((req.session.time)/1000) % 60);
+		console.log(s);
+		var m = Math.floor((req.session.time)/60000 % 60);
+		console.log(m);
+		var h = Math.floor((req.session.time)/3600000 % 24);
+		console.log(h);
+	res.render("dashboard", {name: req.session.username , hour: h , second: s , minute: m});
+	});
 	}
 	else{
 		res.send("Not logged in");
@@ -224,6 +243,8 @@ app.get("/dashboard", function(req,res){
 });
 
 app.get("/logout", function(req,res){
+	const results = perf.stop();
+	timeof = results.time;
 	req.session.destroy();
 	res.redirect("/");
 });
