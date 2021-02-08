@@ -38,7 +38,9 @@ const loginSchema = {
 const moduleSchema = {
 	username: String,
 	module: String,
-	quizresult: Number
+	modulepoints: Number,
+	quizresult: Number,
+	attempts: Number
 };
 const loginSchema1 = {
 	username: String,
@@ -55,12 +57,16 @@ const counselingSchema = {
 	description: String,
 	time: String
 }
+const rankingSchema = {
+	username: String,
+	rankss: Number 
+}
 
 const Student = mongoose.model("Student",loginSchema);
 const Module = mongoose.model("Module",moduleSchema);
 const Teacher = mongoose.model("Teacher", loginSchema1);
 const Counseling = mongoose.model("Counseling", counselingSchema);
-
+const Ranking = mongoose.model("Ranking", rankingSchema);
 
 app.get("/math", function(req,res){
 	if(req.session.username)
@@ -75,6 +81,16 @@ app.get("/math", function(req,res){
 app.get("/", function(req,res){
 	console.log(warnsignlog);
 	res.render("home");
+});
+
+app.get("/module4", function(req,res){
+	if(req.session.username)
+	{
+	res.render("module4");
+	}
+	else{
+		res.send("Not log in");
+	}
 });
 
 app.post("/", function(req,res){
@@ -103,12 +119,39 @@ app.post("/", function(req,res){
         points: 1,
 		timeep: 0
     });
+	const mod1 = new Module ({
+        username: req.body.uname,
+        module: "Module1",
+		modulepoints: 0,
+		quizresult: 0,
+		attempts: 0
+    });
+	const mod2 = new Module ({
+        username: req.body.uname,
+        module: "Module2",
+		modulepoints: 0,
+		quizresult: 0,
+		attempts: 0
+    });
     login.save(function(err){
     if (!err){
 	   console.log("Success inserted account");
     }
-	res.redirect("/");
+	console.log("Success login");
     });
+	mod1.save(function(err){
+    if (!err){
+	   console.log("Success inserted account");
+    }
+	console.log("Success mod1");
+    });
+	mod2.save(function(err){
+    if (!err){
+	   console.log("Success inserted account");
+    }
+	console.log("Success mod2");
+    });
+	res.redirect("/");
 	}
 	});
 	}
@@ -148,6 +191,35 @@ app.post("/", function(req,res){
 app.get("/teacher/home", function(req,res){
 
 	res.render("teacherhome");
+});
+
+app.get("/module1quiz", function(req,res){
+	if(req.session.username)
+	{
+	res.render("quiz2");
+	}
+	else{
+		res.send("Not log in");
+	}
+});
+
+app.get("/module2quiz", function(req,res){
+	if(req.session.username)
+	{
+	res.render("module2");
+	}
+	else{
+		res.send("Not log in");
+	}
+});
+app.get("/module1answerquiz", function(req,res){
+	if(req.session.username)
+	{
+        res.render("quiz2answerkey");		
+	}
+	else{
+		res.send("Not log in");
+	}
 });
 
 
@@ -228,18 +300,216 @@ app.get("/dashboard", function(req,res){
 				uptime.save();
 			}
 		});
+		Student.find({}, "username points", function(err , rank){
+		Ranking.findOne({username: req.session.username}, function(err , postta){
+		Ranking.remove({}, function(err){
+			console.log("removed");
+		});
+		Student.find({}, function(err , stu){
+		for(var i=0;i<rank.length;i++)
+		{
+		const rankeeo = new Ranking({
+			username: rank[i].username,
+			rankss: i+1
+		});
+		rankeeo.save(function(err){
+ 	    console.log("Success rankeeo");
+        });
+		}
+		Module.find({username: req.session.username}, function(err , postss){
 		var s = Math.floor(((req.session.time)/1000) % 60);
 		console.log(s);
 		var m = Math.floor((req.session.time)/60000 % 60);
 		console.log(m);
 		var h = Math.floor((req.session.time)/3600000 % 24);
 		console.log(h);
-	res.render("dashboard", {name: req.session.username , hour: h , second: s , minute: m});
+	res.render("dashboard", {name: req.session.username , hour: h , second: s , minute: m , modules: postss , ranksss: postta.rankss});
+	});
+	});
+	});
+	}).sort('field -points');
 	});
 	}
 	else{
 		res.send("Not logged in");
 	}
+});
+
+app.post("/module4", function(req,res){
+	var values= [];
+	console.log(req.body.cbx);
+	if(req.body.cbx === "cbx")
+	{
+		values.push(req.body.cbx);
+		  var val = 0;
+	    console.log(values);
+	    Student.findOne({username: req.session.username}, function(err , post){
+		console.log(post.points);
+		req.session.value =post.points  + values.length;
+	    console.log(values.length);
+	    console.log(req.session.value);
+	    Student.findOneAndUpdate({username: req.session.username}, {points: req.session.value}, function(err, foundList){
+        if (!err){
+		  foundList.save();
+       }
+    });
+	});
+	}
+	else{
+	for(var i=0;i<req.body.cbx.length;i++)
+	{
+		values.push(req.body.cbx[i]);
+
+	}
+	 var val = 0;
+	 console.log(values);
+	Student.findOne({username: req.session.username}, function(err , post){
+		console.log(post.points);
+		req.session.value =post.points  + values.length;
+	console.log(values.length);
+	console.log(req.session.value);
+	Student.findOneAndUpdate({username: req.session.username}, {points: req.session.value}, function(err, foundList){
+      if (!err){
+		  foundList.save();
+      }
+    });
+	});
+	}
+	res.redirect("/module4");
+});
+
+app.post("/module1quiz", function(req,res){
+	var m = req.body.moduleone;
+	var c = 0;
+	var qmodone1 = req.body.question1;
+	var qmodone2 = req.body.question2;
+	var qmodone3 = req.body.question3;
+	var qmodone4 = req.body.question4;
+	var qmodone5 = req.body.question5;
+	var qmodone6 = req.body.question6;
+	var qmodone7 = req.body.question7;
+	var qmodone8 = req.body.question8;
+	var qmodone9 = req.body.question9;
+	var qmodone10 = req.body.question10;
+	if(qmodone1 === "25200")
+	{
+		c++;
+	}
+	if(qmodone2 === "209")
+	{
+		c++;
+	}
+	if(qmodone3 === "720")
+	{
+		c++;
+	}
+	if(qmodone4 === "50400")
+	{
+		c++;
+	}
+	if(qmodone5 === "63")
+	{
+		c++;
+	}
+	if(qmodone6 === "120960")
+	{
+		c++;
+	}
+	if(qmodone7 === "11760")
+	{
+		c++;
+	}
+	if(qmodone8 === "720")
+	{
+		c++;
+	}
+	if(qmodone9 === "8")
+	{
+		c++;
+	}
+	if(qmodone10 === "36")
+	{
+		c++;
+	}
+	console.log(c);
+	req.session.quizr = c;
+	Module.findOne({username: req.session.username , module: m}, function(err , att){
+		var attm = att.attempts;
+		var attm = attm + 1;
+		Module.findOneAndUpdate({username: req.session.username , module: m} , {quizresult: req.session.quizr , attempts: attm}, function(err, foundList){
+        if (!err){
+		  foundList.save();
+        }
+     });
+	});
+	res.redirect("/module1answerquiz");
+});
+
+app.post("/module2quiz", function(req,res){
+	var m = req.body.moduletwo;
+	var c = 0;
+	var qmodone1 = req.body.question1;
+	var qmodone2 = req.body.question2;
+	var qmodone3 = req.body.question3;
+	var qmodone4 = req.body.question4;
+	var qmodone5 = req.body.question5;
+	var qmodone6 = req.body.question6;
+	var qmodone7 = req.body.question7;
+	var qmodone8 = req.body.question8;
+	var qmodone9 = req.body.question9;
+	var qmodone10 = req.body.question10;
+	if(qmodone1 === "1/26")
+	{
+		c++;
+	}
+	if(qmodone2 === "2/91")
+	{
+		c++;
+	}
+	if(qmodone3 === "13/102")
+	{
+		c++;
+	}
+	if(qmodone4 === "9/52")
+	{
+		c++;
+	}
+	if(qmodone5 === "4/7")
+	{
+		c++;
+	}
+	if(qmodone6 === "3/4")
+	{
+		c++;
+	}
+	if(qmodone7 === "21/46")
+	{
+		c++;
+	}
+	if(qmodone8 === "2/7")
+	{
+		c++;
+	}
+	if(qmodone9 === "1/221")
+	{
+		c++;
+	}
+	if(qmodone10 === "5/12")
+	{
+		c++;
+	}
+	console.log(c);
+	req.session.quizr = c;
+	Module.findOne({username: req.session.username , module: m}, function(err , att){
+		var attm = att.attempts;
+		var attm = attm + 1;
+		Module.findOneAndUpdate({username: req.session.username , module: m} , {quizresult: req.session.quizr , attempts: attm}, function(err, foundList){
+        if (!err){
+		  foundList.save();
+        }
+     });
+	});
+	res.redirect("/module2quiz");
 });
 
 app.get("/logout", function(req,res){
