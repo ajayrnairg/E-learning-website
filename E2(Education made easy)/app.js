@@ -59,6 +59,16 @@ const Teacher = mongoose.model("Teacher", loginSchema1);
 const Counseling = mongoose.model("Counseling", counselingSchema);
 
 
+app.get("/math", function(req,res){
+	if(req.session.username)
+	{
+	res.render("math");
+	}
+	else{
+		res.send("Not logged in");
+	}
+});
+
 app.get("/", function(req,res){
 	console.log(warnsignlog);
 	res.render("home");
