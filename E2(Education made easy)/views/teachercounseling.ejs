@@ -35,12 +35,9 @@
             <li class="nav-item">
               <a class="nav-link" href="#contact">Contact</a>
             </li>
-			<li class="nav-item">
-              <a class="nav-link" href="/teacher/counselling">Counseling</a>
-            </li>
             <li class="nav-item">
-              <a class="nav-link" href="/teacher/doubt">Doubt's of students</a>
-            </li>
+			  <a class="nav-link" href="/ttcounseling">Timetable counseling</a>
+			</li>
           </ul>
         </div>
       </div>
@@ -52,20 +49,26 @@
 <table class="table table-hover">
  <thead>
    <tr>
-     <th>Username</th>
-	 <th>Points</th>
-	 <th>Dashboard</th>
+     <th>Student name</th>
+     <th>Teacher name</th>
+	 <th>Description</th>
+	 <th>Time</th>
+	 <th>Submit your response</th>
    </tr>
  </thead>
  <tbody>
-    <% students.forEach(function(postss){ %>
+    <% counselingss.forEach(function(postssecd){ %>
 	<tr>
-     <td><%= postss.username %></td>
-	 <td><%= postss.points %></td>
-	 <td><a href="/progress/<%=postss._id%>">Dashboard</a></td>
+	<form action="/teacher/counselling" method="post">
+	 <td><%= postssecd.studentusername %></td>
+     <td><%= postssecd.teacherusername %></td>
+	 <td><input class="form-control" type="text" placeholder="Description" name="description" value="<%=postssecd.description%>" readonly></td>
+	 <td><input class="form-control" type="text" placeholder="Time" name="time"></td>
+	 <td><button type="submit" class="btn btn-primary" name="studentsub" value="<%= postssecd.studentusername %>">Submit</button></td>
+	 </form>
 	</tr>
 	<% }) %>
- </tbody>
+ </tbody>  
 </table>
 <footer>
   <div class="footer">

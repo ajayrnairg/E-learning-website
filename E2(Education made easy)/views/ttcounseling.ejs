@@ -35,11 +35,11 @@
             <li class="nav-item">
               <a class="nav-link" href="#contact">Contact</a>
             </li>
-			<li class="nav-item">
-              <a class="nav-link" href="/teacher/counselling">Counseling</a>
+            <li>
+               <button type="button" class="btn btn-outline-warning signinin" onclick="document.getElementById('id02').style.display='block'" style="width:auto;">Sign Up </button>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/teacher/doubt">Doubt's of students</a>
+            <li>
+              <button type="button" class="btn btn-outline-warning signinin" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Sign In </button>
             </li>
           </ul>
         </div>
@@ -52,20 +52,22 @@
 <table class="table table-hover">
  <thead>
    <tr>
-     <th>Username</th>
-	 <th>Points</th>
-	 <th>Dashboard</th>
+     <th>Student name</th>
+     <th>Teacher name</th>
+	 <th>Description</th>
+	 <th>Time</th>
    </tr>
  </thead>
  <tbody>
-    <% students.forEach(function(postss){ %>
+    <% counselingsss.forEach(function(postsscd){ %>
 	<tr>
-     <td><%= postss.username %></td>
-	 <td><%= postss.points %></td>
-	 <td><a href="/progress/<%=postss._id%>">Dashboard</a></td>
+	 <td><%= postsscd.studentusername %></td>
+     <td><%= postsscd.teacherusername %></td>
+	 <td><input class="form-control" type="text" placeholder="Description" name="description" value="<%=postsscd.description%>" readonly></td>
+	 <td><input class="form-control" type="text" placeholder="Time" name="time" value="<%=postsscd.time%>" readonly></td>
 	</tr>
 	<% }) %>
- </tbody>
+ </tbody>  
 </table>
 <footer>
   <div class="footer">
