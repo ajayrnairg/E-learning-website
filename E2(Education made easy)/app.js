@@ -279,6 +279,16 @@ app.get("/module2quiz", function(req,res){
 		res.send("Not log in");
 	}
 });
+
+app.get("/timetable", function(req,res){
+	if(req.session.username)
+	{
+		res.render("timetable");
+	}
+	else{
+		res.send("Not log in");
+	}
+});
 app.get("/module1answerquiz", function(req,res){
 	if(req.session.username)
 	{
