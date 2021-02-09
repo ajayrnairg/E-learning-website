@@ -32,7 +32,7 @@ const loginSchema = {
  institution: String,
  plan: String,
  points: Number,
- timeep: Number 
+ timeep: Number
 };
 
 const moduleSchema = {
@@ -68,7 +68,7 @@ const doubtsolvingSchema = {
 
 const rankingSchema = {
 	username: String,
-	rankss: Number 
+	rankss: Number
 }
 
 const Student = mongoose.model("Student",loginSchema);
@@ -285,8 +285,8 @@ app.get("/module1answerquiz", function(req,res){
         res.render("quiz2answerkey", {question1r: req.session.question1 , question2r: req.session.question2
 		, question3r: req.session.question3 , question4r: req.session.question4
 		, question5r: req.session.question5 , question6r: req.session.question6
-		, question7r: req.session.question7 , question8r: req.session.question8 
-		, question9r: req.session.question9 , question10r: req.session.question10});		
+		, question7r: req.session.question7 , question8r: req.session.question8
+		, question9r: req.session.question9 , question10r: req.session.question10});
 	}
 	else{
 		res.send("Not log in");
@@ -299,8 +299,8 @@ app.get("/module1freeanswerquiz", function(req,res){
         res.render("quiz2freeanswer", {question1r: req.session.question1 , question2r: req.session.question2
 		, question3r: req.session.question3 , question4r: req.session.question4
 		, question5r: req.session.question5 , question6r: req.session.question6
-		, question7r: req.session.question7 , question8r: req.session.question8 
-		, question9r: req.session.question9 , question10r: req.session.question10});		
+		, question7r: req.session.question7 , question8r: req.session.question8
+		, question9r: req.session.question9 , question10r: req.session.question10});
 	}
 	else{
 		res.send("Not log in");
@@ -313,8 +313,8 @@ app.get("/module2freeanswerquiz", function(req,res){
         res.render("module7freeanswer", {question1r: req.session.question1 , question2r: req.session.question2
 		, question3r: req.session.question3 , question4r: req.session.question4
 		, question5r: req.session.question5 , question6r: req.session.question6
-		, question7r: req.session.question7 , question8r: req.session.question8 
-		, question9r: req.session.question9 , question10r: req.session.question10});		
+		, question7r: req.session.question7 , question8r: req.session.question8
+		, question9r: req.session.question9 , question10r: req.session.question10});
 	}
 	else{
 		res.send("Not log in");
@@ -358,7 +358,7 @@ app.get("/module7answer", function(req,res){
 		res.render("module7answer" , {question1r: req.session.question1 , question2r: req.session.question2
 		, question3r: req.session.question3 , question4r: req.session.question4
 		, question5r: req.session.question5 , question6r: req.session.question6
-		, question7r: req.session.question7 , question8r: req.session.question8 
+		, question7r: req.session.question7 , question8r: req.session.question8
 		, question9r: req.session.question9 , question10r: req.session.question10});
 	}
 	else{
@@ -684,6 +684,17 @@ app.post("/module7free", function(req,res){
 app.post("/module1quiz", function(req,res){
 	var m = req.body.moduleone;
 	var c = 0;
+	req.session.question1 = " ";
+	req.session.question2 = " ";
+	req.session.question3 = " ";
+	req.session.question4 = " ";
+	req.session.question5 = " ";
+	req.session.question6 = " ";
+	req.session.question7 = " ";
+	req.session.question8 = " ";
+	req.session.question9 = " ";
+	req.session.question10 = " ";
+
 	var qmodone1 = req.body.question1;
 	var qmodone2 = req.body.question2;
 	var qmodone3 = req.body.question3;
@@ -697,53 +708,63 @@ app.post("/module1quiz", function(req,res){
 	if(qmodone1 === "25200")
 	{
 		c++;
-		req.session.question1 = qmodone1;
+
 	}
+	req.session.question1 = qmodone1;
 	if(qmodone2 === "209")
 	{
 		c++;
-		req.session.question2 = qmodone2;
+
 	}
+	req.session.question2 = qmodone2;
 	if(qmodone3 === "720")
 	{
 		c++;
-		req.session.question3 = qmodone3;
+
 	}
+	req.session.question3 = qmodone3;
 	if(qmodone4 === "50400")
 	{
 		c++;
-		req.session.question4 = qmodone4;
+
 	}
+	req.session.question4 = qmodone4;
 	if(qmodone5 === "63")
 	{
 		c++;
-		req.session.question5 = qmodone5;
+
 	}
+	req.session.question5 = qmodone5;
 	if(qmodone6 === "120960")
 	{
 		c++;
-		req.session.question6 = qmodone6;
+
 	}
+	req.session.question6 = qmodone6;
 	if(qmodone7 === "11760")
 	{
 		c++;
-		req.session.question7 = qmodone7;
+
 	}
+	req.session.question7 = qmodone7;
 	if(qmodone8 === "720")
 	{
 		c++;
-		req.session.question8 = qmodone8;
+
 	}
+	req.session.question8 = qmodone8;
 	if(qmodone9 === "8")
 	{
 		c++;
-		req.session.question9 = qmodone9;
+
 	}
+	req.session.question9 = qmodone9;
 	if(qmodone10 === "36")
 	{
 		c++;
-		req.session.question10 = qmodone10;
+
 	}
+	req.session.question10 = qmodone10;
 	console.log(c);
 	req.session.quizr = c;
 	Module.findOne({username: req.session.username , module: m}, function(err , att){
@@ -771,6 +792,16 @@ app.post("/module1quiz", function(req,res){
 app.post("/module1freequiz", function(req,res){
 	var m = req.body.moduleone;
 	var c = 0;
+	req.session.question1 = " ";
+	req.session.question2 = " ";
+	req.session.question3 = " ";
+	req.session.question4 = " ";
+	req.session.question5 = " ";
+	req.session.question6 = " ";
+	req.session.question7 = " ";
+	req.session.question8 = " ";
+	req.session.question9 = " ";
+	req.session.question10 = " ";
 	var qmodone1 = req.body.question1;
 	var qmodone2 = req.body.question2;
 	var qmodone3 = req.body.question3;
@@ -784,53 +815,63 @@ app.post("/module1freequiz", function(req,res){
 	if(qmodone1 === "25200")
 	{
 		c++;
-		req.session.question1 = qmodone1;
+
 	}
+	req.session.question1 = qmodone1;
 	if(qmodone2 === "209")
 	{
 		c++;
-		req.session.question2 = qmodone2;
+
 	}
+	req.session.question2 = qmodone2;
 	if(qmodone3 === "720")
 	{
 		c++;
-		req.session.question3 = qmodone3;
+
 	}
+	req.session.question3 = qmodone3;
 	if(qmodone4 === "50400")
 	{
 		c++;
-		req.session.question4 = qmodone4;
+
 	}
+	req.session.question4 = qmodone4;
 	if(qmodone5 === "63")
 	{
 		c++;
-		req.session.question5 = qmodone5;
+
 	}
+	req.session.question5 = qmodone5;
 	if(qmodone6 === "120960")
 	{
 		c++;
-		req.session.question6 = qmodone6;
+
 	}
+	req.session.question6 = qmodone6;
 	if(qmodone7 === "11760")
 	{
 		c++;
-		req.session.question7 = qmodone7;
+
 	}
+	req.session.question7 = qmodone7;
 	if(qmodone8 === "720")
 	{
 		c++;
-		req.session.question8 = qmodone8;
+
 	}
+	req.session.question8 = qmodone8;
 	if(qmodone9 === "8")
 	{
 		c++;
-		req.session.question9 = qmodone9;
+
 	}
+	req.session.question9 = qmodone9;
 	if(qmodone10 === "36")
 	{
 		c++;
-		req.session.question10 = qmodone10;
+
 	}
+	req.session.question10 = qmodone10;
 	console.log(c);
 	req.session.quizr = c;
 	Module.findOne({username: req.session.username , module: m}, function(err , att){
@@ -858,6 +899,16 @@ app.post("/module1freequiz", function(req,res){
 app.post("/module2quiz", function(req,res){
 	var m = req.body.moduletwo;
 	var c = 0;
+	req.session.question1 = " ";
+	req.session.question2 = " ";
+	req.session.question3 = " ";
+	req.session.question4 = " ";
+	req.session.question5 = " ";
+	req.session.question6 = " ";
+	req.session.question7 = " ";
+	req.session.question8 = " ";
+	req.session.question9 = " ";
+	req.session.question10 = " ";
 	var qmodone1 = req.body.question1;
 	var qmodone2 = req.body.question2;
 	var qmodone3 = req.body.question3;
@@ -871,53 +922,63 @@ app.post("/module2quiz", function(req,res){
 	if(qmodone1 === "1/26")
 	{
 		c++;
-		req.session.question1 = qmodone1;
+
 	}
+	req.session.question1 = qmodone1;
 	if(qmodone2 === "2/91")
 	{
 		c++;
-		req.session.question2= qmodone2;
+
 	}
+	req.session.question2= qmodone2;
 	if(qmodone3 === "13/102")
 	{
 		c++;
-		req.session.question3 = qmodone3;
+
 	}
+	req.session.question3 = qmodone3;
 	if(qmodone4 === "9/52")
 	{
 		c++;
-		req.session.question4 = qmodone4;
+
 	}
+	req.session.question4 = qmodone4;
 	if(qmodone5 === "4/7")
 	{
 		c++;
-		req.session.question5 = qmodone5;
+
 	}
+	req.session.question5 = qmodone5;
 	if(qmodone6 === "3/4")
 	{
 		c++;
-		req.session.question6 = qmodone6;
+
 	}
+	req.session.question6 = qmodone6;
 	if(qmodone7 === "21/46")
 	{
 		c++;
-		req.session.question7 = qmodone7;
+
 	}
+	req.session.question7 = qmodone7;
 	if(qmodone8 === "2/7")
 	{
 		c++;
-		req.session.question8 = qmodone8;
+
 	}
+	req.session.question8 = qmodone8;
 	if(qmodone9 === "1/221")
 	{
 		c++;
-		req.session.question9 = qmodone9;
+
 	}
+	req.session.question9 = qmodone9;
 	if(qmodone10 === "5/12")
 	{
 		c++;
-		req.session.question10 = qmodone10;
+
 	}
+	req.session.question10 = qmodone10;
 	console.log(c);
 	req.session.quizr = c;
 	Module.findOne({username: req.session.username , module: m}, function(err , att){
@@ -945,6 +1006,16 @@ app.post("/module2quiz", function(req,res){
 app.post("/module2freequiz", function(req,res){
 	var m = req.body.moduletwo;
 	var c = 0;
+	req.session.question1 = " ";
+	req.session.question2 = " ";
+	req.session.question3 = " ";
+	req.session.question4 = " ";
+	req.session.question5 = " ";
+	req.session.question6 = " ";
+	req.session.question7 = " ";
+	req.session.question8 = " ";
+	req.session.question9 = " ";
+	req.session.question10 = " ";
 	var qmodone1 = req.body.question1;
 	var qmodone2 = req.body.question2;
 	var qmodone3 = req.body.question3;
@@ -958,53 +1029,63 @@ app.post("/module2freequiz", function(req,res){
 	if(qmodone1 === "1/26")
 	{
 		c++;
-		req.session.question1 = qmodone1;
+
 	}
+	req.session.question1 = qmodone1;
 	if(qmodone2 === "2/91")
 	{
 		c++;
-		req.session.question2= qmodone2;
+
 	}
+	req.session.question2= qmodone2;
 	if(qmodone3 === "13/102")
 	{
 		c++;
-		req.session.question3 = qmodone3;
+
 	}
+	req.session.question3 = qmodone3;
 	if(qmodone4 === "9/52")
 	{
 		c++;
-		req.session.question4 = qmodone4;
+
 	}
+	req.session.question4 = qmodone4;
 	if(qmodone5 === "4/7")
 	{
 		c++;
-		req.session.question5 = qmodone5;
+
 	}
+	req.session.question5 = qmodone5;
 	if(qmodone6 === "3/4")
 	{
 		c++;
-		req.session.question6 = qmodone6;
+
 	}
+	req.session.question6 = qmodone6;
 	if(qmodone7 === "21/46")
 	{
 		c++;
-		req.session.question7 = qmodone7;
+
 	}
+	req.session.question7 = qmodone7;
 	if(qmodone8 === "2/7")
 	{
 		c++;
-		req.session.question8 = qmodone8;
+
 	}
+	req.session.question8 = qmodone8;
 	if(qmodone9 === "1/221")
 	{
 		c++;
-		req.session.question9 = qmodone9;
+
 	}
+	req.session.question9 = qmodone9;
 	if(qmodone10 === "5/12")
 	{
 		c++;
-		req.session.question10 = qmodone10;
+
 	}
+	req.session.question10 = qmodone10;
 	console.log(c);
 	req.session.quizr = c;
 	Module.findOne({username: req.session.username , module: m}, function(err , att){
@@ -1134,7 +1215,7 @@ app.get("/progress/:postId", function(req, res){
    res.redirect("/dashboard");
    });
  });
- 
+
  app.post("/studentcounseling", function(req,res){
 	console.log(req.body.studentsubmit);
 	req.session.username1 = req.body.studentsubmit;
