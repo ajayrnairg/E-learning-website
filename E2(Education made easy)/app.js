@@ -88,6 +88,12 @@ const imageSchema = {
 	}	
 }
 
+const notificationSchema = {
+	notification: String,
+	number: Number,
+	time: String
+}
+
 const Student = mongoose.model("Student",loginSchema);
 const Module = mongoose.model("Module",moduleSchema);
 const Teacher = mongoose.model("Teacher", loginSchema1);
@@ -95,6 +101,7 @@ const Counseling = mongoose.model("Counseling", counselingSchema);
 const Ranking = mongoose.model("Ranking", rankingSchema);
 const Doubt = mongoose.model("Doubt", doubtsolvingSchema);
 const Image = mongoose.model("Image", imageSchema);
+const Notification = mongoose.model("Notification", notificationSchema)
 app.get("/math", function(req,res){
 	if(req.session.username)
 	{
@@ -141,6 +148,19 @@ app.get("/profile", function(req,res){
 	}
 	else{
 		res.send("Not log in")
+	}
+});
+
+app.get("/notification", function(req,res){
+	if(req.session.username){
+		Notification.find({}, "notification number time", function(err , noti){
+		Notification.find ({}, function(err , postno){
+			res.render("notification", {notification: noti});
+		});
+		}).sort('field -number');
+	}
+	else{
+		res.send("Not log in");
 	}
 });
 
