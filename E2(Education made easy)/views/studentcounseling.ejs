@@ -51,6 +51,7 @@
    <tr>
      <th>Teacher name</th>
 	 <th>Description</th>
+	 <th>Link For Session</th>
 	 <th>Time</th>
 	 <th>Submit your response</th>
    </tr>
@@ -61,6 +62,7 @@
 	<form action="/studentcounseling" method="post">
      <td><%= postssec.username %></td>
 	 <td><input class="form-control" type="text" placeholder="Description" name="description"></td>
+	 <td><input class="form-control" type="text" placeholder="Link" name="link" value="<%= postssec.link %>" readonly></td>
 	 <td><input class="form-control" type="text" placeholder="Time" value="<%= postssec.time %>" readonly><%= postssec.time %></td>
 	 <td><button type="submit" class="btn btn-primary" name="studentsubmit" value="<%= postssec.username %>">Submit</button></td>
 	 </form>

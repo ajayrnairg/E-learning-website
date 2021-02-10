@@ -55,7 +55,8 @@
      <th>Student name</th>
      <th>Teacher name</th>
 	 <th>Doubt</th>
-	 <th>Reply</th>
+	 <th>Link for session</th>
+	 <th>Status</th>
 	 <th>Submit the answer</th>
    </tr>
  </thead>
@@ -66,7 +67,8 @@
 	 <td><%= postssecd.studentusername %></td>
      <td><%= postssecd.teacherusername %></td>
 	 <td><input class="form-control" type="text" placeholder="Doubt" name="description" value="<%=postssecd.doubt%>" readonly></td>
-	 <td><input class="form-control" type="text" placeholder="Your reply" name="reply"></td>
+	 <td><input class="form-control" type="text" placeholder="Link" name="link"></td>
+	 <td><input class="form-control" type="text" placeholder="Your reply" name="time"></td>
 	 <td><button type="submit" class="btn btn-primary" name="studentsub" value="<%= postssecd.studentusername %>">Submit</button></td>
 	 </form>
 	</tr>

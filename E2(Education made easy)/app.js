@@ -3,6 +3,9 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const _ = require("lodash");
 const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+const port = process.env.PORT || 3000;
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const session = require('express-session');
@@ -10,10 +13,14 @@ const fs = require("fs");
 var XLSV = require("xlsx");
 var alert = require("alert");
 const perf = require("execution-time")();
+var multer = require("multer");
+var path = require("path");
+require("dotenv/config");
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
+app.use(bodyParser.json())
 app.use(session({
 	secret: 'Your secret key',
 	resave: true,
@@ -55,6 +62,7 @@ const counselingSchema = {
 	studentusername: String,
 	teacherusername: String,
 	description: String,
+	link: String,
 	time: String
 }
 
@@ -62,6 +70,7 @@ const doubtsolvingSchema = {
 	studentusername: String,
 	teacherusername: String,
 	doubt: String,
+	link: String,
 	reply: String
 }
 
@@ -71,16 +80,34 @@ const rankingSchema = {
 	rankss: Number
 }
 
+const imageSchema = {
+	username: String,
+	img: {
+		data: Buffer,
+		contentType: String
+	}	
+}
+
 const Student = mongoose.model("Student",loginSchema);
 const Module = mongoose.model("Module",moduleSchema);
 const Teacher = mongoose.model("Teacher", loginSchema1);
 const Counseling = mongoose.model("Counseling", counselingSchema);
 const Ranking = mongoose.model("Ranking", rankingSchema);
 const Doubt = mongoose.model("Doubt", doubtsolvingSchema);
+const Image = mongoose.model("Image", imageSchema);
 app.get("/math", function(req,res){
 	if(req.session.username)
 	{
-	res.render("math");
+	Module.findOne({username: req.session.username , module: "Module1"}, function(err , postm){
+		Module.findOne({username: req.session.username , module: "Module2"}, function(err , postmm){
+			
+			var progress1 = Math.floor((postm.modulepoints/23)*100);
+			var progress2 = Math.floor((postmm.modulepoints/33)*100);
+			console.log(progress1);
+			console.log(progress2);
+			res.render("math", {progress1: progress1 , progress2: progress2});
+		});
+	});
 	}
 	else{
 		res.send("Not logged in");
@@ -90,6 +117,67 @@ app.get("/math", function(req,res){
 app.get("/", function(req,res){
 	console.log(warnsignlog);
 	res.render("home");
+});
+
+app.get('/chat', function(req, res){
+  res.render("chat");
+});
+
+io.on('connection', (socket) => {
+  socket.on('chat message', msg => {
+    io.emit('chat message', msg);
+  });
+});
+
+
+app.get("/profile", function(req,res){
+	if(req.session.username)
+	{
+	Image.find({username: req.session.username}, (err, items) => {
+		Student.findOne({username: req.session.username}, function(err , posto){
+		res.render("profile", {username: posto.username , email: posto.email ,  plan: posto.plan ,items: items , institution: posto.institution , address: posto.address});
+	});
+	});
+	}
+	else{
+		res.send("Not log in")
+	}
+});
+
+app.post("/profile", function(req,res){
+	var storage = multer.diskStorage({
+	destination: (req, file, cb) => {
+		cb(null, 'uploads')
+	},
+	filename: (req, file, cb) => {
+		cb(null, file.profile_photo + '-' + Date.now())
+	}
+});
+
+var uploads = multer({storage: storage});
+	var obj = {
+		username: req.session.username,
+		img: {
+			data: fs.readFileSync(path.join(__dirname + '/public/' + req.body.profile_photo)),
+			contentType: "image/png"
+		}
+	}
+	Image.findOneAndUpdate({username: req.session.username} , obj, (err , item) => {
+		if(err){
+			console.log(err);
+		}
+		else{
+			item.save();
+			console.log("Updated image");
+		}
+	});
+	console.log(req.session.username);
+	Student.findOneAndUpdate({username: req.session.username} , {username: req.body.username , institution: req.body.inst , address: req.body.addr} , function(err , postp){
+		if(!err){
+			postp.save();
+			res.redirect("/profile");
+		}
+	});
 });
 
 app.get("/module4", function(req,res){
@@ -194,6 +282,13 @@ app.post("/", function(req,res){
 		username: req.body.uname,
 		rankss: 0
 	});
+	const imge = new Image ({
+		username: req.body.uname,
+		img: {
+			data: fs.readFileSync(path.join(__dirname + '/public' + '/profile.png')),
+			contentType: "image/png"
+		}
+	});
     login.save(function(err){
     if (!err){
 	   console.log("Success inserted account");
@@ -215,6 +310,12 @@ app.post("/", function(req,res){
 	ran.save(function(err){
     if (!err){
 	   console.log("Success inserted account");
+    }
+	console.log("Success rank");
+    });
+	imge.save(function(err){
+    if (!err){
+	   console.log("Success inserted image");
     }
 	console.log("Success rank");
     });
@@ -334,7 +435,16 @@ app.get("/module2freeanswerquiz", function(req,res){
 
 app.get("/mathfree", function(req,res){
 	if(req.session.username){
-		res.render("mathfree");
+		Module.findOne({username: req.session.username , module: "Module1"}, function(err , postm){
+		Module.findOne({username: req.session.username , module: "Module2"}, function(err , postmm){
+			
+			var progress1 = Math.floor((postm.modulepoints/23)*100);
+			var progress2 = Math.floor((postmm.modulepoints/33)*100);
+			console.log(progress1);
+			console.log(progress2);
+			res.render("mathfree", {progress1: progress1 , progress2: progress2});
+	});
+	});
 	}
 	else{
 		res.send("Not log in");
@@ -538,6 +648,16 @@ app.post("/module4", function(req,res){
        }
     });
 	});
+	Module.findOne({username: req.session.username , module: "Module1"}, function(err , post){
+		console.log(post.modulepoints);
+		req.session.value1 =post.modulepoints  + values.length;
+	    console.log(req.session.value1);
+	    Module.findOneAndUpdate({username: req.session.username}, {modulepoints: req.session.value1}, function(err, foundList1){
+        if (!err){
+		  foundList1.save();
+       }
+    });
+	});
 	}
 	else{
 	for(var i=0;i<req.body.cbx.length;i++)
@@ -556,6 +676,16 @@ app.post("/module4", function(req,res){
       if (!err){
 		  foundList.save();
       }
+    });
+	});
+	Module.findOne({username: req.session.username , module: "Module1"}, function(err , post){
+		console.log(post.modulepoints);
+		req.session.value1 =post.modulepoints  + values.length;
+	    console.log(req.session.value1);
+	    Module.findOneAndUpdate({username: req.session.username}, {modulepoints: req.session.value1}, function(err, foundList1){
+        if (!err){
+		  foundList1.save();
+       }
     });
 	});
 	}
@@ -581,6 +711,16 @@ app.post("/module4free", function(req,res){
        }
     });
 	});
+	Module.findOne({username: req.session.username , module: "Module1"}, function(err , post){
+		console.log(post.modulepoints);
+		req.session.value1 =post.modulepoints  + values.length;
+	    console.log(req.session.value1);
+	    Module.findOneAndUpdate({username: req.session.username}, {modulepoints: req.session.value1}, function(err, foundList1){
+        if (!err){
+		  foundList1.save();
+       }
+    });
+	});
 	}
 	else{
 	for(var i=0;i<req.body.cbx.length;i++)
@@ -599,6 +739,16 @@ app.post("/module4free", function(req,res){
       if (!err){
 		  foundList.save();
       }
+    });
+	});
+	Module.findOne({username: req.session.username , module: "Module1"}, function(err , post){
+		console.log(post.modulepoints);
+		req.session.value1 =post.modulepoints  + values.length;
+	    console.log(req.session.value1);
+	    Module.findOneAndUpdate({username: req.session.username}, {modulepoints: req.session.value1}, function(err, foundList1){
+        if (!err){
+		  foundList1.save();
+       }
     });
 	});
 	}
@@ -624,6 +774,16 @@ app.post("/module7", function(req,res){
        }
     });
 	});
+	Module.findOne({username: req.session.username , module: "Module2"}, function(err , post){
+		console.log(post.modulepoints);
+		req.session.value1 =post.modulepoints  + values.length;
+	    console.log(req.session.value1);
+	    Module.findOneAndUpdate({username: req.session.username}, {modulepoints: req.session.value1}, function(err, foundList1){
+        if (!err){
+		  foundList1.save();
+       }
+    });
+	});
 	}
 	else{
 	for(var i=0;i<req.body.cbx.length;i++)
@@ -642,6 +802,16 @@ app.post("/module7", function(req,res){
       if (!err){
 		  foundList.save();
       }
+    });
+	});
+	Module.findOne({username: req.session.username , module: "Module2"}, function(err , post){
+		console.log(post.modulepoints);
+		req.session.value1 =post.modulepoints  + values.length;
+	    console.log(req.session.value1);
+	    Module.findOneAndUpdate({username: req.session.username}, {modulepoints: req.session.value1}, function(err, foundList1){
+        if (!err){
+		  foundList1.save();
+       }
     });
 	});
 	}
@@ -667,6 +837,16 @@ app.post("/module7free", function(req,res){
        }
     });
 	});
+	Module.findOne({username: req.session.username , module: "Module2"}, function(err , post){
+		console.log(post.modulepoints);
+		req.session.value1 =post.modulepoints  + values.length;
+	    console.log(req.session.value1);
+	    Module.findOneAndUpdate({username: req.session.username}, {modulepoints: req.session.value1}, function(err, foundList1){
+        if (!err){
+		  foundList1.save();
+       }
+    });
+	});
 	}
 	else{
 	for(var i=0;i<req.body.cbx.length;i++)
@@ -685,6 +865,16 @@ app.post("/module7free", function(req,res){
       if (!err){
 		  foundList.save();
       }
+    });
+	});
+	Module.findOne({username: req.session.username , module: "Module2"}, function(err , post){
+		console.log(post.modulepoints);
+		req.session.value1 =post.modulepoints  + values.length;
+	    console.log(req.session.value1);
+	    Module.findOneAndUpdate({username: req.session.username}, {modulepoints: req.session.value1}, function(err, foundList1){
+        if (!err){
+		  foundList1.save();
+       }
     });
 	});
 	}
@@ -796,6 +986,16 @@ app.post("/module1quiz", function(req,res){
       }
     });
 	});
+	Module.findOne({username: req.session.username , module: "Module1"}, function(err , post){
+		console.log(post.modulepoints);
+		req.session.value2 =post.modulepoints  + req.session.quizr;
+	    console.log(req.session.value2);
+	    Module.findOneAndUpdate({username: req.session.username}, {modulepoints: req.session.value2}, function(err, foundList2){
+        if (!err){
+		  foundList2.save();
+       }
+    });
+	});
 	res.redirect("/module1answerquiz");
 });
 
@@ -901,6 +1101,16 @@ app.post("/module1freequiz", function(req,res){
       if (!err){
 		  foundList.save();
       }
+    });
+	});
+	Module.findOne({username: req.session.username , module: "Module1"}, function(err , post){
+		console.log(post.modulepoints);
+		req.session.value1 =post.modulepoints  + req.session.quizr;
+	    console.log(req.session.value1);
+	    Module.findOneAndUpdate({username: req.session.username}, {modulepoints: req.session.value1}, function(err, foundList1){
+        if (!err){
+		  foundList1.save();
+       }
     });
 	});
 	res.redirect("/module1freeanswerquiz");
@@ -1010,6 +1220,16 @@ app.post("/module2quiz", function(req,res){
       }
     });
 	});
+	Module.findOne({username: req.session.username , module: "Module2"}, function(err , post){
+		console.log(post.modulepoints);
+		req.session.value1 =post.modulepoints  + req.session.quizr;
+	    console.log(req.session.value1);
+	    Module.findOneAndUpdate({username: req.session.username}, {modulepoints: req.session.value1}, function(err, foundList1){
+        if (!err){
+		  foundList1.save();
+       }
+    });
+	});
 	res.redirect("/module7answer");
 });
 
@@ -1117,6 +1337,16 @@ app.post("/module2freequiz", function(req,res){
       }
     });
 	});
+	Module.findOne({username: req.session.username , module: "Module2"}, function(err , post){
+		console.log(post.modulepoints);
+		req.session.value1 =post.modulepoints  + req.session.quizr;
+	    console.log(req.session.value1);
+	    Module.findOneAndUpdate({username: req.session.username}, {modulepoints: req.session.value1}, function(err, foundList1){
+        if (!err){
+		  foundList1.save();
+       }
+    });
+	});
 	res.redirect("/module2freeanswerquiz");
 });
 
@@ -1127,8 +1357,8 @@ app.get("/logout", function(req,res){
 	res.redirect("/");
 });
 
-app.listen(3000, function() {
-  console.log("Server started on port 3000");
+http.listen(port, () => {
+  console.log("Server started at post 3000");
 });
 
 app.get("/teacher/dashboard", function(req,res){
@@ -1192,8 +1422,9 @@ app.post("/teacher/counselling", function(req,res){
 	req.session.description = req.body.description;
 	console.log(req.body.time);
 	var tm = req.body.time;
+	var lk= req.body.link;
 	console.log("I am"+tm);
-	Counseling.findOneAndUpdate({description: req.body.description}, {time: tm}, function(err, foundListss){
+	Counseling.findOneAndUpdate({description: req.body.description}, {time: tm , link: lk}, function(err, foundListss){
       if (!err){
 		  foundListss.save();
 		  console.log("success updated time");
@@ -1206,9 +1437,10 @@ app.post("/teacher/doubt", function(req,res){
 	req.session.username = req.body.studentsub;
 	req.session.description = req.body.description;
 	console.log(req.body.reply);
-	var tm = req.body.reply;
+	var tm = req.body.time;
+	var lk= req.body.link;
 	console.log("I am"+tm);
-	Doubt.findOneAndUpdate({doubt: req.body.description}, {reply: tm}, function(err, foundListss){
+	Doubt.findOneAndUpdate({doubt: req.body.description}, {reply: tm , link: lk}, function(err, foundListss){
       if (!err){
 		  foundListss.save();
 		  console.log("success updated reply");
@@ -1233,6 +1465,7 @@ app.get("/progress/:postId", function(req, res){
 	 studentusername: req.session.username,
 	 teacherusername: req.body.studentsubmit,
 	 description: req.body.description,
+	 link: "0",
 	 time: "0"
  });
  coun.save(function(err){
@@ -1248,6 +1481,7 @@ app.get("/progress/:postId", function(req, res){
 	 studentusername: req.session.username,
 	 teacherusername: req.body.studentsubmit,
 	 doubt: req.body.description,
+	 link: 0,
 	 reply: "0"
  });
  coun1.save(function(err){

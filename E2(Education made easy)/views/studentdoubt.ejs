@@ -54,7 +54,8 @@
    <tr>
      <th>Teacher name</th>
 	 <th>Doubt</th>
-	 <th>Reply</th>
+	 <th>Link for session</th>
+	 <th>Status</th>
 	 <th>Submit your doubt</th>
    </tr>
  </thead>
@@ -64,7 +65,8 @@
 	<form action="/studentdoubt" method="post">
      <td><%= postssec.username %></td>
 	 <td><input class="form-control" type="text" placeholder="Doubt" name="description"></td>
-	 <td><input class="form-control" type="text" placeholder="Reply" value="<%= postssec.reply %>" readonly><%= postssec.reply %></td>
+	 <td><input class="form-control" type="text" placeholder="Link for session" value="<%= postssec.link %>" readonly><%= postssec.reply %></td>
+	  <td><input class="form-control" type="text" placeholder="Time" value="<%= postssec.reply %>" readonly><%= postssec.reply %></td>
 	 <td><button type="submit" class="btn btn-primary" name="studentsubmit" value="<%= postssec.username %>">Submit</button></td>
 	 </form>
 	</tr>

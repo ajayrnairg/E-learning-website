@@ -55,6 +55,7 @@
      <th>Student name</th>
      <th>Teacher name</th>
 	 <th>Description</th>
+	 <th>Link for session</th>
 	 <th>Time</th>
    </tr>
  </thead>
@@ -64,6 +65,7 @@
 	 <td><%= postsscd.studentusername %></td>
      <td><%= postsscd.teacherusername %></td>
 	 <td><input class="form-control" type="text" placeholder="Description" name="description" value="<%=postsscd.description%>" readonly></td>
+	 <td><input class="form-control" type="text" placeholder="Link" name="link" value="<%=postsscd.link%>" readonly></td>
 	 <td><input class="form-control" type="text" placeholder="Time" name="time" value="<%=postsscd.time%>" readonly></td>
 	</tr>
 	<% }) %>

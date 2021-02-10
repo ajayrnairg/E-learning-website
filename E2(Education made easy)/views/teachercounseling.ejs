@@ -52,6 +52,7 @@
      <th>Student name</th>
      <th>Teacher name</th>
 	 <th>Description</th>
+	 <th>Link For Session</th>
 	 <th>Time</th>
 	 <th>Submit your response</th>
    </tr>
@@ -63,6 +64,7 @@
 	 <td><%= postssecd.studentusername %></td>
      <td><%= postssecd.teacherusername %></td>
 	 <td><input class="form-control" type="text" placeholder="Description" name="description" value="<%=postssecd.description%>" readonly></td>
+	 <td><input class="form-control" type="text" placeholder="Link" name="link"></td>
 	 <td><input class="form-control" type="text" placeholder="Time" name="time"></td>
 	 <td><button type="submit" class="btn btn-primary" name="studentsub" value="<%= postssecd.studentusername %>">Submit</button></td>
 	 </form>
