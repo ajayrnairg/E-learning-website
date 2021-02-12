@@ -39,7 +39,8 @@ const loginSchema = {
  institution: String,
  plan: String,
  points: Number,
- timeep: Number
+ timeep: Number,
+ pet: String
 };
 
 const moduleSchema = {
@@ -55,7 +56,7 @@ const loginSchema1 = {
 	email: String,
   address: String,
   institution: String
-
+  
 };
 
 const counselingSchema = {
@@ -149,6 +150,69 @@ app.get("/profile", function(req,res){
 	else{
 		res.send("Not log in")
 	}
+});
+
+app.get("/forgotpass", function(req,res){
+	if(req.session.email)
+	{
+	res.render("forgotpass");
+	}
+	else{
+		res.send("Email not found");
+	}
+});
+
+app.get("/forgotpassemail", function(req,res){
+	res.render("forgotpassemail");
+});
+
+app.post("/forgotpass", function(req,res){
+	var salt = "Xy";
+	var hashed = crypto.createHash('md5').update(req.body.pass).digest("hex");
+   var passhash = hashed + salt;
+   Student.findOneAndUpdate({username: req.body.username , email: req.session.email} , {pass: passhash} , function(err , pos){
+	   if(!err){
+            pos.save();
+            res.redirect("/");			
+	   }
+   });
+});
+
+app.post("/forgotpassemail", function(req,res){
+	Student.exists({email: req.body.Email}, function(err , docssee){
+		if(docssee === true){
+			req.session.email = req.body.Email;
+			res.redirect("/forgotpasspet");
+		}
+		else{
+			console.log("Invalid email");
+			alert("Invalid email");
+			res.redirect("/");
+		}
+	});
+});
+
+app.get("/forgotpasspet", function(req,res){
+	if(req.session.email)
+	{
+	res.render("forgotpasspet");
+	}
+	else{
+		res.send("Email not found");
+	}
+});
+
+app.post("/forgotpasspet", function(req,res){
+	console.log(req.session.email);
+	Student.findOne({email: req.session.email}, function(err , posttss){
+		if(posttss.pet === req.body.pet){
+			res.redirect("/forgotpass");
+		}
+		else{
+			res.redirect("/");
+			alert("Invalid pet");
+		}
+	});
 });
 
 app.get("/notification", function(req,res){
@@ -282,7 +346,8 @@ app.post("/", function(req,res){
 		institution: req.body.insttt,
 		plan: req.body.plan,
         points: 1,
-		timeep: 0
+		timeep: 0,
+		pet: req.body.pet
     });
 	const mod1 = new Module ({
         username: req.body.uname,
