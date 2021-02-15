@@ -14,18 +14,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-  <div class="dashboard-block">
-    <div class="w3-sidebar w3-bar-block w3-sand w3-xxlarge" style="width:70px">
-      <a href="/dashboard" class="w3-bar-item w3-button" data-toggle="tooltip" title="Dashboard"><i class="fa fa-home"></i></a>
-      <a href="#" class="w3-bar-item w3-button" data-toggle="tooltip" title="Timetable"><i class="fa fa-table"></i></a>
-      <a href="#" class="w3-bar-item w3-button" data-toggle="tooltip" title="Help-Desk"><i class="fa fa-envelope"></i></a>
-
-      <a href="#" class="w3-bar-item w3-button" data-toggle="tooltip" title="Physics"><i class="fas fa-atom"></i></a>
-      <a href="#" class="w3-bar-item w3-button" data-toggle="tooltip" title="Chemistry"><i class="fas fa-flask"></i></a>
-      <a href="/math" class="w3-bar-item w3-button" data-toggle="tooltip" title="Maths"><i class="fas fa-square-root-alt"></i></a>
-      <a href="/logout" class="w3-bar-item w3-button" data-toggle="tooltip" title="Logout"><i class="fas fa-sign-out-alt"></i></a>
-    </div>
-  </div>
+  
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
       <a class="navbar-brand" href="#title"><img class="logo" src="/Elogo.png" alt="logo"></a>
@@ -63,11 +52,11 @@
       </div>
     </div>
   </nav>
-  <form class="myprofile" action="/forgotpasspet" method="post">
+  <form class="myprofile" action="/teacher/forgotpassemail" method="post">
 <br>
 <br>
-    <label for="validationDefault01" class="form-label fname">Security name</label>
-    <input type="text" class="form-control" id="validationDefault01" name="pet" required><br>
+    <label for="validationDefault01" class="form-label fname">Email</label>
+    <input type="text" class="form-control" id="validationDefault01" name="Email" required><br>
 
     <button type="submit" class="btn btn-outline-info" name="button" style="margin:2%" >Continue</button>
   </form>

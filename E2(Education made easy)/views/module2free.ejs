@@ -40,6 +40,9 @@
         <div class="modal-body">
                 <div class="popup">
                  <div class="popup-content">
+				 <div class="countdown">
+				   <p id="countdown"></p>
+				  </div>
                      <!-------------Questions Starts -->
                  <p>1. A card is drawn from a pack of 52 cards. The probability of getting a queen of club or a king of heart is:</p>
                 
@@ -164,7 +167,19 @@
     
 
 </div>
-
+  <script>
+     const startingMinutes = 25;
+	 let time = startingMinutes * 60;
+	 const countdownEl = document.getElementById('countdown');
+	 setInterval(updateCountdown, 1000);
+	 function updateCountdown() {
+	     const minutes = Math.floor(time / 60);
+		 let seconds = time % 60;
+		 seconds = seconds < 25 ? '0' + seconds : seconds;
+		 countdownEl.innerHTML = `${minutes}: ${seconds}`;
+	     time--;
+	 }
+   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>

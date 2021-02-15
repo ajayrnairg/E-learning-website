@@ -55,8 +55,8 @@ const loginSchema1 = {
 	pass: String,
 	email: String,
   address: String,
-  institution: String
-  
+  institution: String,
+  pet: String
 };
 
 const counselingSchema = {
@@ -162,8 +162,24 @@ app.get("/forgotpass", function(req,res){
 	}
 });
 
+app.get("/teacher/forgotpass", function(req,res){
+	if(req.session.email)
+	{
+	res.render("teacherforgotpass");
+	}
+	else{
+		res.send("Email not found");
+	}
+});
+
+
+
 app.get("/forgotpassemail", function(req,res){
 	res.render("forgotpassemail");
+});
+
+app.get("/teacher/forgotpassemail", function(req,res){
+	res.render("teacherforgotpassemail");
 });
 
 app.post("/forgotpass", function(req,res){
@@ -178,11 +194,37 @@ app.post("/forgotpass", function(req,res){
    });
 });
 
+app.post("/teacher/forgotpass", function(req,res){
+	var salt = "Xy";
+	var hashed = crypto.createHash('md5').update(req.body.pass).digest("hex");
+   var passhash = hashed + salt;
+   Teacher.findOneAndUpdate({username: req.body.username , email: req.session.email} , {pass: passhash} , function(err , pos){
+	   if(!err){
+            pos.save();
+            res.redirect("/teacher/home");			
+	   }
+   });
+});
+
 app.post("/forgotpassemail", function(req,res){
 	Student.exists({email: req.body.Email}, function(err , docssee){
 		if(docssee === true){
 			req.session.email = req.body.Email;
 			res.redirect("/forgotpasspet");
+		}
+		else{
+			console.log("Invalid email");
+			alert("Invalid email");
+			res.redirect("/");
+		}
+	});
+});
+
+app.post("/teacher/forgotpassemail", function(req,res){
+	Teacher.exists({email: req.body.Email}, function(err , docssee){
+		if(docssee === true){
+			req.session.email = req.body.Email;
+			res.redirect("/teacher/forgotpasspet");
 		}
 		else{
 			console.log("Invalid email");
@@ -202,9 +244,32 @@ app.get("/forgotpasspet", function(req,res){
 	}
 });
 
+app.get("/teacher/forgotpasspet", function(req,res){
+	if(req.session.email)
+	{
+	res.render("forgotpasspet");
+	}
+	else{
+		res.send("Email not found");
+	}
+});
+
 app.post("/forgotpasspet", function(req,res){
 	console.log(req.session.email);
-	Student.findOne({email: req.session.email}, function(err , posttss){
+	Teacher.findOne({email: req.session.email}, function(err , posttss){
+		if(posttss.pet === req.body.pet){
+			res.redirect("/teacher/forgotpass");
+		}
+		else{
+			res.redirect("/");
+			alert("Invalid pet");
+		}
+	});
+});
+
+app.post("/teacher/forgotpasspet", function(req,res){
+	console.log(req.session.email);
+	Teacher.findOne({email: req.session.email}, function(err , posttss){
 		if(posttss.pet === req.body.pet){
 			res.redirect("/forgotpass");
 		}
@@ -594,7 +659,7 @@ app.post("/teacher/home", function(req,res){
 		email: req.body.email,
 		address: req.body.addr,
 		institution: req.body.insttt,
-
+        pet: req.body.pet
     });
     login1.save(function(err){
     if (!err){
@@ -690,7 +755,7 @@ app.get("/dashboard", function(req,res){
 		console.log(m);
 		var h = Math.floor((req.session.time)/3600000 % 24);
 		console.log(h);
-	res.render("dashboard", {name: req.session.username , hour: h , second: s , minute: m , modules: postss , ranksss: rankpost.rankss , freepaid: req.session.plan});
+	res.render("dashboard", {name: req.session.username , hour: h , second: s , minute: m , modules: postss , ranksss: rankpost.rankss , freepaid: req.session.plan , outoff: rank.length});
 	});
 	});
 	});
@@ -1556,7 +1621,7 @@ app.get("/progress/:postId", function(req, res){
  coun.save(function(err){
 	console.log("Success inserted counselling");
  });
- res.redirect("/teacher/counselling");
+ res.redirect("/studentcounseling");
 });
 
  app.post("/studentdoubt", function(req,res){
@@ -1572,5 +1637,5 @@ app.get("/progress/:postId", function(req, res){
  coun1.save(function(err){
 	console.log("Success inserted counselling");
  });
- res.redirect("/teacher/doubt");
+ res.redirect("/studentdoubt");
 });
