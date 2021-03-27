@@ -11,6 +11,7 @@ const crypto = require("crypto");
 const session = require('express-session');
 const fs = require("fs");
 var XLSV = require("xlsx");
+const nodemailer=require('nodemailer');
 var alert = require("alert");
 const perf = require("execution-time")();
 var multer = require("multer");
@@ -40,7 +41,8 @@ const loginSchema = {
  plan: String,
  points: Number,
  timeep: Number,
- pet: String
+ pet: String,
+ verificationstatus: Number
 };
 
 const moduleSchema = {
@@ -120,6 +122,62 @@ app.get("/math", function(req,res){
 	else{
 		res.send("Not logged in");
 	}
+});
+
+app.get("/verify", function(req,res){
+	res.render("verify");
+});
+
+app.post('/verify',function(req,res){
+	console.log(req.body.otp);
+	console.log(otp);
+    if(req.body.otp==otp){
+        Student.findOneAndUpdate({email: req.session.em}, {verificationstatus: 1} , function(err , uptim){
+			if(!err){
+				uptim.save();
+				res.redirect("/");
+			}
+		});
+    }
+    else{
+        res.redirect("verify");
+    }
+});  
+
+app.post('/resend',function(req,res){
+    var mailOptions={
+        to: email,
+       subject: "Otp for registration is: ",
+       html: "<h3>OTP for account verification is </h3>"  + "<h1 style='font-weight:bold;'>" + otp +"</h1>" // html body
+     };
+     
+     transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return console.log(error);
+        }
+        console.log('Message sent: %s', info.messageId);   
+        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+        res.render('otp',{msg:"otp has been sent"});
+    });
+
+});
+
+var otp = Math.random();
+otp = otp * 1000000;
+otp = parseInt(otp);
+console.log(otp);
+
+let transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    service : 'Gmail',
+    
+    auth: {
+      user: 'lbsproject123456@gmail.com',
+      pass: 'lbsproject123',
+    }
+    
 });
 
 app.get("/", function(req,res){
@@ -412,7 +470,8 @@ app.post("/", function(req,res){
 		plan: req.body.plan,
         points: 1,
 		timeep: 0,
-		pet: req.body.pet
+		pet: req.body.pet,
+		verificationstatus: 0
     });
 	const mod1 = new Module ({
         username: req.body.uname,
@@ -469,7 +528,32 @@ app.post("/", function(req,res){
     }
 	console.log("Success rank");
     });
-	res.redirect("/");
+	var mailOptions={
+        to: req.body.email,
+       subject: "Otp for registration: ",
+       html: "<h3>This is a system generated mail. Please do not reply to this email ID. If you have a query or need any clarification you may email us at lbsproject123456@gmail</h3>" +
+	   "<br><br>"+
+	   "<h3>Welcome, We thank you for Using E2 Online Education system.<br>Your email id update OTP code is : </h3>"  + "<h1 style='font-weight:bold;'>" + otp +"</h1><br><br>"+
+	   "<p>*************************** Information******************************<br>"+
+	    "For any enquiries or information regarding your transaction with E2(Education made easy), do not<br>"+
+		"provide your credit/debit card details by any means to E2(Education made easy). All your queries<br>"+
+		"can be replied on the basis of 10 digit E2(Education made easy) Transaction id/ PNR no./User id.<br>"+
+		"E2(Education made easy) does not store the credit/debit card information in any form during the transaction.<br>"+
+		"**********************************************************************</p>"+
+        "<p>In case you require any further assistance, please mail us at <a href="+"lbsproject123456@gmail"+">lbsproject123456@gmail</a>.<br><br><br>"+
+		"Warm Regards,<br>"+
+		"Customer Care<br>"+
+		"E2(Education made easy)<br></p>"		// html body
+     };
+	req.session.em = req.body.email
+	transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return console.log(error);
+        }
+        console.log('Message sent: %s', info.messageId);   
+        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+		res.redirect("/verify");
+    });
 	}
 	});
 	}
@@ -484,7 +568,7 @@ app.post("/", function(req,res){
 	{
 		alert("Please enter details");
 	}
-	Student.exists({username: name , pass: passhash , plan: req.body.planlogin}, function(err,doc){
+	Student.exists({username: name , pass: passhash , plan: req.body.planlogin , verificationstatus: 1}, function(err,doc){
 		if(err){
 			console.log(err);
 			console.log("Invalid username or password");

@@ -10,6 +10,11 @@ body{
   padding-bottom: 0;
   border-radius: 0 0 20px 0;
 }
+
+.weekhead p{
+	margin: 2rem;
+	font-size: 2rem;
+}
 .pro{
   display: flex;
   position: absolute;
