@@ -88,7 +88,7 @@ const imageSchema = {
 	img: {
 		data: Buffer,
 		contentType: String
-	}	
+	}
 }
 
 const notificationSchema = {
@@ -110,7 +110,7 @@ app.get("/math", function(req,res){
 	{
 	Module.findOne({username: req.session.username , module: "Module1"}, function(err , postm){
 		Module.findOne({username: req.session.username , module: "Module2"}, function(err , postmm){
-			
+
 			var progress1 = Math.floor((postm.modulepoints/23)*100);
 			var progress2 = Math.floor((postmm.modulepoints/33)*100);
 			console.log(progress1);
@@ -142,20 +142,20 @@ app.post('/verify',function(req,res){
     else{
         res.redirect("verify");
     }
-});  
+});
 
 app.post('/resend',function(req,res){
     var mailOptions={
-        to: email,
+        to: res.session.em,
        subject: "Otp for registration is: ",
        html: "<h3>OTP for account verification is </h3>"  + "<h1 style='font-weight:bold;'>" + otp +"</h1>" // html body
      };
-     
+
      transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
             return console.log(error);
         }
-        console.log('Message sent: %s', info.messageId);   
+        console.log('Message sent: %s', info.messageId);
         console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
         res.render('otp',{msg:"otp has been sent"});
     });
@@ -172,12 +172,12 @@ let transporter = nodemailer.createTransport({
     port: 465,
     secure: true,
     service : 'Gmail',
-    
+
     auth: {
       user: 'lbsproject123456@gmail.com',
-      pass: 'lbsproject123',
+      pass: 'projectlbs123',
     }
-    
+
 });
 
 app.get("/", function(req,res){
@@ -247,7 +247,7 @@ app.post("/forgotpass", function(req,res){
    Student.findOneAndUpdate({username: req.body.username , email: req.session.email} , {pass: passhash} , function(err , pos){
 	   if(!err){
             pos.save();
-            res.redirect("/");			
+            res.redirect("/");
 	   }
    });
 });
@@ -259,7 +259,7 @@ app.post("/teacher/forgotpass", function(req,res){
    Teacher.findOneAndUpdate({username: req.body.username , email: req.session.email} , {pass: passhash} , function(err , pos){
 	   if(!err){
             pos.save();
-            res.redirect("/teacher/home");			
+            res.redirect("/teacher/home");
 	   }
    });
 });
@@ -550,7 +550,7 @@ app.post("/", function(req,res){
         if (error) {
             return console.log(error);
         }
-        console.log('Message sent: %s', info.messageId);   
+        console.log('Message sent: %s', info.messageId);
         console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
 		res.redirect("/verify");
     });
@@ -671,7 +671,7 @@ app.get("/mathfree", function(req,res){
 	if(req.session.username){
 		Module.findOne({username: req.session.username , module: "Module1"}, function(err , postm){
 		Module.findOne({username: req.session.username , module: "Module2"}, function(err , postmm){
-			
+
 			var progress1 = Math.floor((postm.modulepoints/23)*100);
 			var progress2 = Math.floor((postmm.modulepoints/33)*100);
 			console.log(progress1);

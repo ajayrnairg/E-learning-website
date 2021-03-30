@@ -69,7 +69,7 @@
     <h2>4. Permutations and Combinations</h2>
     <section id="faculty-videos">
       <hr>
-      <h3>Faculty Videos</h3>
+      <h3>Faculty Videos By Prof. Somesh Kumar</h3>
 
       <div class="form-check">
   <div class="row row-cols-1 row-cols-md-3 g-4">
@@ -124,11 +124,11 @@
 
   <iframe src="https://drive.google.com/file/d/1bqZs5NsgPGoVxyJCHLZrDISbFoQdpo-B/preview" width="90%" height="350" target="_blank" ></iframe>
             </div>
-			
+
 
   </div>
       </div>
-	  
+
 
         </section>
 <hr>
@@ -170,35 +170,42 @@
   </div>
 </section>
 <hr>
-       
+
 	   <a href="/studentdoubt" class="btn btn-primary">Doubt Section</a>
-	  <hr> 
+	  <hr>
      <button type="submit" class="btn btn-primary" name="Module1" value="Module1">Submit your progress</button>
-	
+
 	</form>
 	</div>
 	</div>
   <br>
   <br>
   <br>
+  <div class="callout">
+    <div class="callout-header">About This Section</div>
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">×</span>
+    <div class="callout-container">
+      <p>After completing each section click On the respective checkboxes to record the progress.</p>
+    </div>
+  </div>
   <script>
     var checkboxValues = JSON.parse(localStorage.getItem('checkboxValues')) || {},
 	$checkboxes = $("#checkbox-container :checkbox");
-	
+
 	$checkboxes.on("change", function(){
 	    $checkboxes.each(function(){
 		    checkboxValues[this.id] = this.checked;
 		});
-		
+
 		localStorage.setItem("checkboxValues", JSON.stringify(checkboxValues))
 	});
-	
+
 	$.each(checkboxValues, function(key, value){
 	    $("#" + key).prop('checked', value);
 	});
 </script>
 
- <script src= "https://code.jquery.com/jquery-3.5.1.js"> </script> 
+ <script src= "https://code.jquery.com/jquery-3.5.1.js"> </script>
   <script src="https://kit.fontawesome.com/79927721c6.js" crossorigin="anonymous"></script>
 
 </body>

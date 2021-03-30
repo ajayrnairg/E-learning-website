@@ -78,6 +78,7 @@ body {
 }
 .aboutusinfo{
   padding-top: 25px;
+  font-size: 1.5rem;
 }
 .carouselimages{
   height: 700px;
@@ -237,7 +238,7 @@ span.psw {
   margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
   border: 1px solid #888;
   width: 50%; /* Could be more or less, depending on screen size */
-  
+
 }
 
 /* The Close Button (x) */
@@ -263,12 +264,12 @@ span.psw {
 }
 
 @-webkit-keyframes animatezoom {
-  from {-webkit-transform: scale(0)} 
+  from {-webkit-transform: scale(0)}
   to {-webkit-transform: scale(1)}
 }
-  
+
 @keyframes animatezoom {
-  from {transform: scale(0)} 
+  from {transform: scale(0)}
   to {transform: scale(1)}
 }
 
