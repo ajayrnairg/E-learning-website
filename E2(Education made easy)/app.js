@@ -314,9 +314,9 @@ app.get("/teacher/forgotpasspet", function(req,res){
 
 app.post("/forgotpasspet", function(req,res){
 	console.log(req.session.email);
-	Teacher.findOne({email: req.session.email}, function(err , posttss){
+	Student.findOne({email: req.session.email}, function(err , posttss){
 		if(posttss.pet === req.body.pet){
-			res.redirect("/teacher/forgotpass");
+			res.redirect("/forgotpass");
 		}
 		else{
 			res.redirect("/");
